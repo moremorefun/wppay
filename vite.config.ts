@@ -1,49 +1,25 @@
-import { defineConfig } from 'vite';
+import { v4wp } from '@kucrut/vite-for-wp';
+import { wp_scripts } from '@kucrut/vite-for-wp/plugins';
 import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
+import { defineConfig } from 'vite';
 
-// WordPress external dependencies
-const wpExternals = {
-  '@wordpress/element': 'wp.element',
-  '@wordpress/components': 'wp.components',
-  '@wordpress/blocks': 'wp.blocks',
-  '@wordpress/block-editor': 'wp.blockEditor',
-  '@wordpress/data': 'wp.data',
-  '@wordpress/i18n': 'wp.i18n',
-  '@wordpress/api-fetch': 'wp.apiFetch',
-  'react': 'React',
-  'react-dom': 'ReactDOM',
-};
-
-export default defineConfig(({ mode }) => ({
-  plugins: [react()],
-
-  build: {
-    outDir: 'dist',
-    emptyOutDir: true,
-    sourcemap: mode === 'development',
-    rollupOptions: {
+export default defineConfig({
+  plugins: [
+    v4wp({
       input: {
         admin: resolve(__dirname, 'src/admin/index.tsx'),
         block: resolve(__dirname, 'src/block/index.tsx'),
         shortcode: resolve(__dirname, 'src/shortcode/index.tsx'),
       },
-      output: {
-        entryFileNames: '[name].js',
-        chunkFileNames: 'chunks/[name]-[hash].js',
-        assetFileNames: (assetInfo) => {
-          if (assetInfo.name?.endsWith('.css')) {
-            return '[name].css';
-          }
-          return 'assets/[name]-[hash][extname]';
-        },
-      },
-      external: Object.keys(wpExternals),
-    },
-  },
+      outDir: 'dist',
+    }),
+    wp_scripts(),
+    react(),
+  ],
 
-  define: {
-    'process.env.NODE_ENV': JSON.stringify(mode),
+  build: {
+    sourcemap: process.env.NODE_ENV === 'development',
   },
 
   server: {
@@ -58,4 +34,4 @@ export default defineConfig(({ mode }) => ({
       '@shared': resolve(__dirname, 'src/shared'),
     },
   },
-}));
+});

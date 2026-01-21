@@ -54,6 +54,11 @@ if ( file_exists( PAYTHEFLY_DIR . 'vendor/autoload.php' ) ) {
 }
 
 /**
+ * Vite for WP integration.
+ */
+require_once PAYTHEFLY_DIR . 'includes/vite-for-wp.php';
+
+/**
  * Main plugin class.
  */
 require_once PAYTHEFLY_DIR . 'includes/class-paythefly.php';

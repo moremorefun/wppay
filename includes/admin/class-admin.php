@@ -7,6 +7,8 @@
 
 namespace PayTheFly\Admin;
 
+use Kucrut\Vite;
+
 /**
  * Handles admin functionality.
  */
@@ -33,32 +35,14 @@ class Admin {
 	 */
 	public function add_admin_menu(): void {
 		add_menu_page(
-			__( 'PayTheFly', 'paythefly' ),
+			__( 'PayTheFly Settings', 'paythefly' ),
 			__( 'PayTheFly', 'paythefly' ),
 			'manage_options',
 			'paythefly',
-			[ $this, 'render_admin_page' ],
+			[ $this->settings, 'render_settings_page' ],
 			'dashicons-money-alt',
 			30
 		);
-
-		add_submenu_page(
-			'paythefly',
-			__( 'Settings', 'paythefly' ),
-			__( 'Settings', 'paythefly' ),
-			'manage_options',
-			'paythefly-settings',
-			[ $this->settings, 'render_settings_page' ]
-		);
-	}
-
-	/**
-	 * Render the main admin page.
-	 *
-	 * @return void
-	 */
-	public function render_admin_page(): void {
-		echo '<div id="paythefly-admin-app"></div>';
 	}
 
 	/**
@@ -73,30 +57,15 @@ class Admin {
 			return;
 		}
 
-		$asset_file = PAYTHEFLY_DIR . 'dist/admin.asset.php';
-
-		if ( file_exists( $asset_file ) ) {
-			$asset = require $asset_file;
-		} else {
-			$asset = [
-				'dependencies' => [ 'wp-element', 'wp-components', 'wp-api-fetch', 'wp-i18n' ],
-				'version'      => PAYTHEFLY_VERSION,
-			];
-		}
-
-		wp_enqueue_script(
-			'paythefly-admin',
-			PAYTHEFLY_URL . 'dist/admin.js',
-			$asset['dependencies'],
-			$asset['version'],
-			true
-		);
-
-		wp_enqueue_style(
-			'paythefly-admin',
-			PAYTHEFLY_URL . 'dist/admin.css',
-			[ 'wp-components' ],
-			$asset['version']
+		Vite\enqueue_asset(
+			PAYTHEFLY_DIR . 'dist',
+			'src/admin/index.tsx',
+			[
+				'handle'           => 'paythefly-admin',
+				'dependencies'     => [ 'react', 'react-dom', 'wp-api-fetch', 'wp-i18n' ],
+				'css-dependencies' => [ 'wp-components' ],
+				'in-footer'        => true,
+			]
 		);
 
 		wp_localize_script(

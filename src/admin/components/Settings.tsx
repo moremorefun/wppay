@@ -3,17 +3,17 @@ import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 
 interface SettingsData {
-  api_key: string;
-  api_secret: string;
-  sandbox_mode: boolean;
+  project_id: string;
+  project_key: string;
+  brand: string;
   webhook_url: string;
 }
 
 export default function Settings() {
   const [settings, setSettings] = useState<SettingsData>({
-    api_key: '',
-    api_secret: '',
-    sandbox_mode: true,
+    project_id: '',
+    project_key: '',
+    brand: '',
     webhook_url: '',
   });
   const [loading, setLoading] = useState(true);
@@ -79,40 +79,36 @@ export default function Settings() {
 
       <form className="paythefly-settings__form" onSubmit={handleSubmit}>
         <div className="paythefly-settings__field">
-          <label htmlFor="api_key">{__('API Key', 'paythefly')}</label>
+          <label htmlFor="project_id">{__('Project ID', 'paythefly')}</label>
           <input
             type="text"
-            id="api_key"
-            value={settings.api_key}
-            onChange={(e) => handleChange('api_key', e.target.value)}
-            placeholder={__('Enter your PayTheFly API key', 'paythefly')}
+            id="project_id"
+            value={settings.project_id}
+            onChange={(e) => handleChange('project_id', e.target.value)}
+            placeholder={__('Enter your PayTheFly Project ID', 'paythefly')}
           />
         </div>
 
         <div className="paythefly-settings__field">
-          <label htmlFor="api_secret">{__('API Secret', 'paythefly')}</label>
+          <label htmlFor="project_key">{__('Project Key', 'paythefly')}</label>
           <input
             type="password"
-            id="api_secret"
-            value={settings.api_secret}
-            onChange={(e) => handleChange('api_secret', e.target.value)}
-            placeholder={__('Enter your PayTheFly API secret', 'paythefly')}
+            id="project_key"
+            value={settings.project_key}
+            onChange={(e) => handleChange('project_key', e.target.value)}
+            placeholder={__('Enter your PayTheFly Project Key', 'paythefly')}
           />
         </div>
 
         <div className="paythefly-settings__field">
-          <label>
-            <input
-              type="checkbox"
-              checked={settings.sandbox_mode}
-              onChange={(e) => handleChange('sandbox_mode', e.target.checked)}
-            />
-            {' '}
-            {__('Enable Sandbox Mode', 'paythefly')}
-          </label>
-          <p className="description">
-            {__('Use sandbox environment for testing. Disable for production.', 'paythefly')}
-          </p>
+          <label htmlFor="brand">{__('Brand', 'paythefly')}</label>
+          <input
+            type="text"
+            id="brand"
+            value={settings.brand}
+            onChange={(e) => handleChange('brand', e.target.value)}
+            placeholder={__('Enter your brand name', 'paythefly')}
+          />
         </div>
 
         <div className="paythefly-settings__field">

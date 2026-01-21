@@ -48,10 +48,10 @@ class Settings {
 	 */
 	public function get_defaults(): array {
 		return [
-			'api_key'      => '',
-			'api_secret'   => '',
-			'sandbox_mode' => true,
-			'webhook_url'  => '',
+			'project_id'  => '',
+			'project_key' => '',
+			'brand'       => '',
+			'webhook_url' => '',
 		];
 	}
 
@@ -64,16 +64,16 @@ class Settings {
 	public function sanitize_settings( $input ): array {
 		$sanitized = [];
 
-		if ( isset( $input['api_key'] ) ) {
-			$sanitized['api_key'] = sanitize_text_field( $input['api_key'] );
+		if ( isset( $input['project_id'] ) ) {
+			$sanitized['project_id'] = sanitize_text_field( $input['project_id'] );
 		}
 
-		if ( isset( $input['api_secret'] ) ) {
-			$sanitized['api_secret'] = sanitize_text_field( $input['api_secret'] );
+		if ( isset( $input['project_key'] ) ) {
+			$sanitized['project_key'] = sanitize_text_field( $input['project_key'] );
 		}
 
-		if ( isset( $input['sandbox_mode'] ) ) {
-			$sanitized['sandbox_mode'] = (bool) $input['sandbox_mode'];
+		if ( isset( $input['brand'] ) ) {
+			$sanitized['brand'] = sanitize_text_field( $input['brand'] );
 		}
 
 		if ( isset( $input['webhook_url'] ) ) {
@@ -102,6 +102,6 @@ class Settings {
 	 * @return void
 	 */
 	public function render_settings_page(): void {
-		echo '<div id="paythefly-settings-app"></div>';
+		echo '<div id="paythefly-admin-app"></div>';
 	}
 }
