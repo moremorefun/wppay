@@ -68,6 +68,12 @@ class Admin {
 			]
 		);
 
+		wp_set_script_translations(
+			'paythefly-admin',
+			'paythefly',
+			PAYTHEFLY_DIR . 'languages'
+		);
+
 		wp_localize_script(
 			'paythefly-admin',
 			'paytheflyAdmin',

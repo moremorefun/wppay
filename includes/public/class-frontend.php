@@ -94,6 +94,12 @@ class Frontend {
 			]
 		);
 
+		wp_set_script_translations(
+			'paythefly-shortcode',
+			'paythefly',
+			PAYTHEFLY_DIR . 'languages'
+		);
+
 		$config = $this->get_donation_config();
 
 		wp_localize_script(
@@ -124,6 +130,12 @@ class Frontend {
 				'dependencies' => [ 'react', 'react-dom', 'wp-i18n' ],
 				'in-footer'    => true,
 			]
+		);
+
+		wp_set_script_translations(
+			'paythefly-fab',
+			'paythefly',
+			PAYTHEFLY_DIR . 'languages'
 		);
 
 		wp_localize_script(

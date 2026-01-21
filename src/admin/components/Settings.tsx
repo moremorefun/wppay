@@ -91,6 +91,12 @@ export default function Settings() {
       <form className="paythefly-settings__form" onSubmit={handleSubmit}>
         <div className="paythefly-settings__section">
           <h3>{__('API Configuration', 'paythefly')}</h3>
+          <p className="paythefly-settings__intro">
+            {__('To get your Project ID and Project Key, create a project at', 'paythefly')}{' '}
+            <a href="https://paythefly.com/" target="_blank" rel="noopener noreferrer">
+              paythefly.com
+            </a>
+          </p>
 
           <div className="paythefly-settings__field">
             <label htmlFor="project_id">{__('Project ID', 'paythefly')}</label>

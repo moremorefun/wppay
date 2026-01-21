@@ -85,6 +85,27 @@ class PayTheFly {
 				);
 			}
 		);
+
+		// Handle JS translation files for Vite-built scripts with dynamic filenames.
+		add_filter(
+			'load_script_textdomain_relative_path',
+			function ( $relative, $src ) {
+				// Check if this is a PayTheFly script.
+				if ( strpos( $src, '/paythefly/' ) === false ) {
+					return $relative;
+				}
+
+				// Map Vite-built filenames to their source entry points.
+				$basename = basename( $src );
+				if ( preg_match( '/^(admin|shortcode|fab|block)-[a-zA-Z0-9]+\.js$/', $basename, $matches ) ) {
+					return 'src/' . $matches[1] . '/index.tsx';
+				}
+
+				return $relative;
+			},
+			10,
+			2
+		);
 	}
 
 	/**
