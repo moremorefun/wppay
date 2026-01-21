@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+vendor/
+
+# Build outputs
+dist/
+*.zip
+
+# wp-env
+.wp-env/
+uploads/
+debug.log
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Testing
+coverage/
+.phpunit.result.cache
+playwright-report/
+test-results/
+
+# Cloudflared
+.cloudflared/*.json
+.cloudflared/*.pem
+
+# Misc
+*.log
+*.cache
+.eslintcache

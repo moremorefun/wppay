@@ -1,0 +1,31 @@
+.paythefly-block-editor {
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #f9f9f9;
+}
+
+.paythefly-block-preview {
+  text-align: center;
+}
+
+.paythefly-block-preview__icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.paythefly-block-preview__title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.paythefly-block-preview__info {
+  font-size: 14px;
+  color: #333;
+}
+
+.paythefly-block-preview__placeholder {
+  color: #999;
+  font-style: italic;
+}
