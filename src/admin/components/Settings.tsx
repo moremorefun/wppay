@@ -175,7 +175,7 @@ export default function Settings() {
             <input
               type="text"
               id="webhook_url"
-              value={`${window.location.origin}/wp-json/paythefly/v1/webhook`}
+              value={`${window.location.origin}/?rest_route=/paythefly/v1/webhook`}
               readOnly
             />
             <p className="description">

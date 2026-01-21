@@ -108,6 +108,18 @@ class RestApi {
 				],
 			]
 		);
+
+		register_rest_route(
+			self::NAMESPACE,
+			'/webhook',
+			[
+				[
+					'methods'             => \WP_REST_Server::CREATABLE,
+					'callback'            => [ $this, 'handle_webhook' ],
+					'permission_callback' => '__return_true',
+				],
+			]
+		);
 	}
 
 	/**
@@ -263,5 +275,74 @@ class RestApi {
 			],
 			201
 		);
+	}
+
+	/**
+	 * Handle PayTheFly webhook callback.
+	 *
+	 * @param WP_REST_Request $request Request object.
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function handle_webhook( WP_REST_Request $request ) {
+		$data = $request->get_param( 'data' );
+		$sign = $request->get_param( 'sign' );
+
+		if ( empty( $data ) || empty( $sign ) ) {
+			return new WP_Error(
+				'missing_params',
+				__( 'Missing data or sign parameter.', 'paythefly' ),
+				[ 'status' => 400 ]
+			);
+		}
+
+		$settings    = get_option( 'paythefly_settings', [] );
+		$project_key = $settings['project_key'] ?? '';
+
+		if ( empty( $project_key ) ) {
+			return new WP_Error(
+				'not_configured',
+				__( 'Project key not configured.', 'paythefly' ),
+				[ 'status' => 500 ]
+			);
+		}
+
+		// Verify signature.
+		$expected_sign = strtoupper( md5( $data . $project_key ) );
+		if ( ! hash_equals( $expected_sign, $sign ) ) {
+			return new WP_Error(
+				'invalid_signature',
+				__( 'Invalid signature.', 'paythefly' ),
+				[ 'status' => 401 ]
+			);
+		}
+
+		// Parse payload.
+		$payload = json_decode( $data, true );
+		if ( json_last_error() !== JSON_ERROR_NONE ) {
+			return new WP_Error(
+				'invalid_json',
+				__( 'Invalid JSON in data.', 'paythefly' ),
+				[ 'status' => 400 ]
+			);
+		}
+
+		// Verify project_id matches.
+		$project_id = $settings['project_id'] ?? '';
+		if ( ( $payload['project_id'] ?? '' ) !== $project_id ) {
+			return new WP_Error(
+				'project_mismatch',
+				__( 'Project ID mismatch.', 'paythefly' ),
+				[ 'status' => 403 ]
+			);
+		}
+
+		/**
+		 * Fires when a valid webhook is received from PayTheFly.
+		 *
+		 * @param array $payload The webhook payload data.
+		 */
+		do_action( 'paythefly_webhook_received', $payload );
+
+		return new WP_REST_Response( [ 'success' => true ], 200 );
 	}
 }
