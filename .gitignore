@@ -18,6 +18,9 @@ debug.log
 *.swo
 .DS_Store
 
+# Claude
+.claude/
+
 # Environment
 .env
 .env.local
