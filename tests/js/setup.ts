@@ -1,7 +1,32 @@
 import '@testing-library/jest-dom';
 
+// Extend global types for test environment
+declare global {
+  var wp: {
+    i18n: {
+      __: (text: string, domain?: string) => string;
+      _x: (text: string, context?: string, domain?: string) => string;
+      _n: (single: string, plural?: string, number?: number, domain?: string) => string;
+      sprintf: (format: string, ...args: unknown[]) => string;
+    };
+    element: {
+      createElement: () => null;
+      Fragment: () => null;
+    };
+  };
+  var paytheflyAdmin: {
+    apiUrl: string;
+    nonce: string;
+    version: string;
+  };
+  var paytheflyFrontend: {
+    apiUrl: string;
+    nonce: string;
+  };
+}
+
 // Mock WordPress globals
-global.wp = {
+globalThis.wp = {
   i18n: {
     __: (text: string) => text,
     _x: (text: string) => text,
@@ -16,13 +41,15 @@ global.wp = {
 };
 
 // Mock paytheflyAdmin/paytheflyFrontend globals
-global.paytheflyAdmin = {
+globalThis.paytheflyAdmin = {
   apiUrl: 'http://localhost:8888/wp-json/paythefly/v1',
   nonce: 'test-nonce',
   version: '1.0.0',
 };
 
-global.paytheflyFrontend = {
+globalThis.paytheflyFrontend = {
   apiUrl: 'http://localhost:8888/wp-json/paythefly/v1',
   nonce: 'test-nonce',
 };
+
+export {};
