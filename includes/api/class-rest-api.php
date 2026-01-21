@@ -66,15 +66,18 @@ class RestApi {
 					'permission_callback' => '__return_true',
 					'args'                => [
 						'amount'      => [
-							'required' => true,
-							'type'     => 'string',
+							'required'          => true,
+							'type'              => 'string',
+							'sanitize_callback' => 'sanitize_text_field',
 						],
 						'currency'    => [
-							'required' => true,
-							'type'     => 'string',
+							'required'          => true,
+							'type'              => 'string',
+							'sanitize_callback' => 'sanitize_text_field',
 						],
 						'description' => [
-							'type' => 'string',
+							'type'              => 'string',
+							'sanitize_callback' => 'sanitize_text_field',
 						],
 					],
 				],

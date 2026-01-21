@@ -135,20 +135,37 @@ class Database {
 
 		$offset = ( $page - 1 ) * $per_page;
 
-		$where = '';
 		if ( ! empty( $status ) ) {
-			$where = $wpdb->prepare( 'WHERE status = %s', $status );
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table_name is safe
+			$items = $wpdb->get_results(
+				$wpdb->prepare(
+					"SELECT * FROM {$this->table_name} WHERE status = %s ORDER BY created_at DESC LIMIT %d OFFSET %d",
+					$status,
+					$per_page,
+					$offset
+				)
+			);
+
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table_name is safe
+			$total = $wpdb->get_var(
+				$wpdb->prepare(
+					"SELECT COUNT(*) FROM {$this->table_name} WHERE status = %s",
+					$status
+				)
+			);
+		} else {
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table_name is safe
+			$items = $wpdb->get_results(
+				$wpdb->prepare(
+					"SELECT * FROM {$this->table_name} ORDER BY created_at DESC LIMIT %d OFFSET %d",
+					$per_page,
+					$offset
+				)
+			);
+
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table_name is safe
+			$total = $wpdb->get_var( "SELECT COUNT(*) FROM {$this->table_name}" );
 		}
-
-		$items = $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT * FROM {$this->table_name} {$where} ORDER BY created_at DESC LIMIT %d OFFSET %d",
-				$per_page,
-				$offset
-			)
-		);
-
-		$total = $wpdb->get_var( "SELECT COUNT(*) FROM {$this->table_name} {$where}" );
 
 		return [
 			'items' => $items ?: [],

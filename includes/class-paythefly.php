@@ -51,7 +51,6 @@ class PayTheFly {
 
 		// API classes.
 		require_once PAYTHEFLY_DIR . 'includes/api/class-rest-api.php';
-		require_once PAYTHEFLY_DIR . 'includes/api/class-webhook.php';
 
 		// Database classes.
 		require_once PAYTHEFLY_DIR . 'includes/database/class-database.php';
@@ -141,9 +140,7 @@ class PayTheFly {
 	 */
 	private function define_api_hooks(): void {
 		$rest_api = new Api\RestApi();
-		$webhook  = new Api\Webhook();
 
 		add_action( 'rest_api_init', [ $rest_api, 'register_routes' ] );
-		add_action( 'rest_api_init', [ $webhook, 'register_routes' ] );
 	}
 }
