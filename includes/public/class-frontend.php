@@ -7,6 +7,8 @@
 
 namespace PayTheFly\Frontend;
 
+use Kucrut\Vite;
+
 /**
  * Handles public-facing functionality.
  */
@@ -27,11 +29,52 @@ class Frontend {
 	private Block $block;
 
 	/**
+	 * ContentFilter instance.
+	 *
+	 * @var ContentFilter
+	 */
+	private ContentFilter $content_filter;
+
+	/**
 	 * Constructor.
 	 */
 	public function __construct() {
-		$this->shortcode = new Shortcode();
-		$this->block     = new Block();
+		$this->shortcode      = new Shortcode();
+		$this->block          = new Block();
+		$this->content_filter = new ContentFilter();
+	}
+
+	/**
+	 * Get donation configuration for frontend.
+	 *
+	 * @return array<string, mixed>
+	 */
+	private function get_donation_config(): array {
+		$settings = get_option( 'paythefly_settings', [] );
+
+		// Get admin user info for recipient display.
+		$admin_users = get_users( [ 'role' => 'administrator', 'number' => 1 ] );
+		$admin_user  = ! empty( $admin_users ) ? $admin_users[0] : null;
+
+		$recipient_name   = $settings['brand'] ?? '';
+		$recipient_avatar = '';
+
+		if ( $admin_user ) {
+			if ( empty( $recipient_name ) ) {
+				$recipient_name = $admin_user->display_name;
+			}
+			$recipient_avatar = get_avatar_url( $admin_user->ID, [ 'size' => 160 ] );
+		}
+
+		return [
+			'apiUrl'          => rest_url( 'paythefly/v1' ),
+			'nonce'           => wp_create_nonce( 'wp_rest' ),
+			'projectId'       => $settings['project_id'] ?? '',
+			'brand'           => $settings['brand'] ?? '',
+			'fabEnabled'      => $settings['fab_enabled'] ?? true,
+			'recipientName'   => $recipient_name,
+			'recipientAvatar' => $recipient_avatar,
+		];
 	}
 
 	/**
@@ -40,39 +83,53 @@ class Frontend {
 	 * @return void
 	 */
 	public function enqueue_scripts(): void {
-		$asset_file = PAYTHEFLY_DIR . 'dist/shortcode.asset.php';
-
-		if ( file_exists( $asset_file ) ) {
-			$asset = require $asset_file;
-		} else {
-			$asset = [
-				'dependencies' => [ 'wp-element' ],
-				'version'      => PAYTHEFLY_VERSION,
-			];
-		}
-
-		wp_register_script(
-			'paythefly-shortcode',
-			PAYTHEFLY_URL . 'dist/shortcode.js',
-			$asset['dependencies'],
-			$asset['version'],
-			true
+		// Register shortcode assets (will be enqueued on demand).
+		Vite\register_asset(
+			PAYTHEFLY_DIR . 'dist',
+			'src/shortcode/index.tsx',
+			[
+				'handle'       => 'paythefly-shortcode',
+				'dependencies' => [ 'react', 'react-dom', 'wp-i18n' ],
+				'in-footer'    => true,
+			]
 		);
 
-		wp_register_style(
-			'paythefly-shortcode',
-			PAYTHEFLY_URL . 'dist/shortcode.css',
-			[],
-			$asset['version']
-		);
+		$config = $this->get_donation_config();
 
 		wp_localize_script(
 			'paythefly-shortcode',
 			'paytheflyFrontend',
+			$config
+		);
+
+		// Enqueue FAB if enabled.
+		$settings = get_option( 'paythefly_settings', [] );
+		if ( ! empty( $settings['fab_enabled'] ) && ! empty( $settings['project_id'] ) ) {
+			$this->enqueue_fab_scripts( $config );
+		}
+	}
+
+	/**
+	 * Enqueue FAB scripts.
+	 *
+	 * @param array<string, mixed> $config Donation config.
+	 * @return void
+	 */
+	private function enqueue_fab_scripts( array $config ): void {
+		Vite\enqueue_asset(
+			PAYTHEFLY_DIR . 'dist',
+			'src/fab/index.tsx',
 			[
-				'apiUrl' => rest_url( 'paythefly/v1' ),
-				'nonce'  => wp_create_nonce( 'wp_rest' ),
+				'handle'       => 'paythefly-fab',
+				'dependencies' => [ 'react', 'react-dom', 'wp-i18n' ],
+				'in-footer'    => true,
 			]
+		);
+
+		wp_localize_script(
+			'paythefly-fab',
+			'paytheflyFrontend',
+			$config
 		);
 	}
 
@@ -92,5 +149,14 @@ class Frontend {
 	 */
 	public function register_blocks(): void {
 		$this->block->register();
+	}
+
+	/**
+	 * Register content filter.
+	 *
+	 * @return void
+	 */
+	public function register_content_filter(): void {
+		$this->content_filter->register();
 	}
 }

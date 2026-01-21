@@ -1,0 +1,60 @@
+/* Floating Action Button Styles */
+#paythefly-fab-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 99998;
+}
+
+.paythefly-fab {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #00FFA3 0%, #00cc83 100%);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    0 4px 12px rgba(0, 255, 163, 0.3),
+    0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.paythefly-fab:hover {
+  transform: scale(1.1);
+  box-shadow:
+    0 6px 20px rgba(0, 255, 163, 0.4),
+    0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.paythefly-fab:active {
+  transform: scale(0.95);
+}
+
+.paythefly-fab svg {
+  width: 24px;
+  height: 24px;
+  color: #000;
+  fill: #000;
+  stroke: #000;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  #paythefly-fab-container {
+    bottom: 16px;
+    right: 16px;
+  }
+
+  .paythefly-fab {
+    width: 48px;
+    height: 48px;
+  }
+
+  .paythefly-fab svg {
+    width: 20px;
+    height: 20px;
+  }
+}

@@ -48,10 +48,12 @@ class Settings {
 	 */
 	public function get_defaults(): array {
 		return [
-			'project_id'  => '',
-			'project_key' => '',
-			'brand'       => '',
-			'webhook_url' => '',
+			'project_id'         => '',
+			'project_key'        => '',
+			'brand'              => '',
+			'webhook_url'        => '',
+			'fab_enabled'        => true,
+			'inline_button_auto' => false,
 		];
 	}
 
@@ -78,6 +80,14 @@ class Settings {
 
 		if ( isset( $input['webhook_url'] ) ) {
 			$sanitized['webhook_url'] = esc_url_raw( $input['webhook_url'] );
+		}
+
+		if ( isset( $input['fab_enabled'] ) ) {
+			$sanitized['fab_enabled'] = (bool) $input['fab_enabled'];
+		}
+
+		if ( isset( $input['inline_button_auto'] ) ) {
+			$sanitized['inline_button_auto'] = (bool) $input['inline_button_auto'];
 		}
 
 		return $sanitized;

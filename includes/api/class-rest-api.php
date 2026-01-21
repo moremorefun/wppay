@@ -80,6 +80,34 @@ class RestApi {
 				],
 			]
 		);
+
+		register_rest_route(
+			self::NAMESPACE,
+			'/orders/create',
+			[
+				[
+					'methods'             => \WP_REST_Server::CREATABLE,
+					'callback'            => [ $this, 'create_order' ],
+					'permission_callback' => '__return_true',
+					'args'                => [
+						'amount'   => [
+							'required'          => true,
+							'type'              => 'string',
+							'sanitize_callback' => 'sanitize_text_field',
+						],
+						'chainId'  => [
+							'required'          => true,
+							'type'              => 'integer',
+							'sanitize_callback' => 'absint',
+						],
+						'redirect' => [
+							'type'              => 'string',
+							'sanitize_callback' => 'esc_url_raw',
+						],
+					],
+				],
+			]
+		);
 	}
 
 	/**
@@ -171,5 +199,69 @@ class RestApi {
 		];
 
 		return new WP_REST_Response( $payment_data, 201 );
+	}
+
+	/**
+	 * USDT contract addresses by chain ID.
+	 */
+	private const USDT_ADDRESSES = [
+		728126428 => 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t', // TRON Mainnet
+		56        => '0x55d398326f99059fF775485246999027B3197955', // BSC Mainnet
+	];
+
+	/**
+	 * Create a donation order and return payment URL parameters.
+	 *
+	 * @param WP_REST_Request $request Request object.
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function create_order( WP_REST_Request $request ) {
+		$amount   = $request->get_param( 'amount' );
+		$chain_id = $request->get_param( 'chainId' );
+		$redirect = $request->get_param( 'redirect' ) ?? '';
+
+		// Validate amount.
+		if ( ! is_numeric( $amount ) || floatval( $amount ) <= 0 ) {
+			return new WP_Error(
+				'invalid_amount',
+				__( 'Invalid amount.', 'paythefly' ),
+				[ 'status' => 400 ]
+			);
+		}
+
+		// Validate chain ID.
+		if ( ! isset( self::USDT_ADDRESSES[ $chain_id ] ) ) {
+			return new WP_Error(
+				'invalid_chain',
+				__( 'Invalid chain ID.', 'paythefly' ),
+				[ 'status' => 400 ]
+			);
+		}
+
+		$settings   = get_option( 'paythefly_settings', [] );
+		$project_id = $settings['project_id'] ?? '';
+		$brand      = $settings['brand'] ?? '';
+
+		if ( empty( $project_id ) ) {
+			return new WP_Error(
+				'missing_project_id',
+				__( 'Project ID is not configured.', 'paythefly' ),
+				[ 'status' => 500 ]
+			);
+		}
+
+		// Generate serial number.
+		$serial_no = 'PTF-' . wp_generate_uuid4();
+
+		return new WP_REST_Response(
+			[
+				'serialNo'  => $serial_no,
+				'projectId' => $project_id,
+				'brand'     => $brand,
+				'token'     => self::USDT_ADDRESSES[ $chain_id ],
+				'redirect'  => $redirect,
+			],
+			201
+		);
 	}
 }

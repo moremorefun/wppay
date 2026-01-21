@@ -31,6 +31,17 @@
   max-width: 600px;
 }
 
+.paythefly-settings__section {
+  margin-bottom: 32px;
+}
+
+.paythefly-settings__section h3 {
+  margin: 0 0 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eee;
+  font-size: 16px;
+}
+
 .paythefly-settings__field {
   margin-bottom: 20px;
 }
@@ -41,7 +52,8 @@
   margin-bottom: 8px;
 }
 
-.paythefly-settings__field input {
+.paythefly-settings__field input[type="text"],
+.paythefly-settings__field input[type="password"] {
   width: 100%;
   padding: 8px 12px;
   border: 1px solid #ddd;
@@ -53,6 +65,54 @@
   border-color: #0073aa;
   outline: none;
   box-shadow: 0 0 0 1px #0073aa;
+}
+
+.paythefly-settings__field .description {
+  margin-top: 6px;
+  color: #666;
+  font-size: 13px;
+}
+
+/* Checkbox field */
+.paythefly-settings__field--checkbox {
+  margin-bottom: 16px;
+}
+
+.paythefly-settings__field--checkbox > label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 400;
+  margin-bottom: 4px;
+  cursor: pointer;
+}
+
+.paythefly-settings__field--checkbox > label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  cursor: pointer;
+}
+
+.paythefly-settings__field--checkbox > label span {
+  font-weight: 600;
+}
+
+.paythefly-settings__field--checkbox .description {
+  margin-left: 26px;
+  margin-top: 4px;
+}
+
+/* Code block */
+.paythefly-settings__code {
+  display: inline-block;
+  padding: 8px 12px;
+  margin: 8px 0;
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 13px;
 }
 
 .paythefly-settings__actions {

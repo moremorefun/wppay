@@ -11,6 +11,7 @@ export default defineConfig({
         admin: resolve(__dirname, 'src/admin/index.tsx'),
         block: resolve(__dirname, 'src/block/index.tsx'),
         shortcode: resolve(__dirname, 'src/shortcode/index.tsx'),
+        fab: resolve(__dirname, 'src/fab/index.tsx'),
       },
       outDir: 'dist',
     }),

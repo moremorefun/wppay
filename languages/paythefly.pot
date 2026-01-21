@@ -1,0 +1,182 @@
+# PayTheFly WordPress Plugin Translation Template
+# Copyright (C) 2024 PayTheFly
+# This file is distributed under the GPLv2 or later.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PayTheFly 1.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-01-01 00:00+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: includes/api/class-rest-api.php
+msgid "You do not have permission to access this endpoint."
+msgstr ""
+
+#: includes/api/class-rest-api.php
+msgid "Invalid amount."
+msgstr ""
+
+#: includes/api/class-rest-api.php
+msgid "Invalid chain ID."
+msgstr ""
+
+#: includes/api/class-rest-api.php
+msgid "Project ID is not configured."
+msgstr ""
+
+#: includes/public/class-content-filter.php
+#: src/shortcode/index.tsx
+msgid "Support the Author"
+msgstr ""
+
+#: includes/public/class-shortcode.php
+msgid "Pay with Crypto"
+msgstr ""
+
+#: src/shared/components/DonationModal.tsx
+msgid "Please enter a valid amount"
+msgstr ""
+
+#: src/shared/components/DonationModal.tsx
+msgid "Configuration error"
+msgstr ""
+
+#: src/shared/components/DonationModal.tsx
+msgid "Failed to create order"
+msgstr ""
+
+#: src/shared/components/DonationModal.tsx
+msgid "An error occurred"
+msgstr ""
+
+#: src/shared/components/DonationModal.tsx
+msgid "Close"
+msgstr ""
+
+#: src/shared/components/DonationModal.tsx
+msgid "Anonymous"
+msgstr ""
+
+#: src/shared/components/DonationModal.tsx
+msgid "Thank you for your support"
+msgstr ""
+
+#: src/shared/components/DonationModal.tsx
+msgid "Enter Amount"
+msgstr ""
+
+#: src/shared/components/DonationModal.tsx
+msgid "Select Network"
+msgstr ""
+
+#: src/shared/components/DonationModal.tsx
+msgid "Processing..."
+msgstr ""
+
+#: src/shared/components/DonationModal.tsx
+msgid "Pay Now"
+msgstr ""
+
+#: src/shared/components/DonationButton.tsx
+#: src/fab/FloatingButton.tsx
+msgid "Support"
+msgstr ""
+
+#: src/admin/components/Settings.tsx
+msgid "Settings saved successfully."
+msgstr ""
+
+#: src/admin/components/Settings.tsx
+msgid "Failed to save settings."
+msgstr ""
+
+#: src/admin/components/Settings.tsx
+msgid "Settings"
+msgstr ""
+
+#: src/admin/components/Settings.tsx
+msgid "API Configuration"
+msgstr ""
+
+#: src/admin/components/Settings.tsx
+msgid "Project ID"
+msgstr ""
+
+#: src/admin/components/Settings.tsx
+msgid "Enter your PayTheFly Project ID"
+msgstr ""
+
+#: src/admin/components/Settings.tsx
+msgid "Your unique project identifier from PayTheFly dashboard."
+msgstr ""
+
+#: src/admin/components/Settings.tsx
+msgid "Brand Name"
+msgstr ""
+
+#: src/admin/components/Settings.tsx
+msgid "Enter your brand name (optional)"
+msgstr ""
+
+#: src/admin/components/Settings.tsx
+msgid "Display name shown to donors. Defaults to admin display name if empty."
+msgstr ""
+
+#: src/admin/components/Settings.tsx
+msgid "Display Options"
+msgstr ""
+
+#: src/admin/components/Settings.tsx
+msgid "Enable Floating Action Button (FAB)"
+msgstr ""
+
+#: src/admin/components/Settings.tsx
+msgid "Show a floating donation button in the bottom-right corner of all pages."
+msgstr ""
+
+#: src/admin/components/Settings.tsx
+msgid "Auto-add button to post content"
+msgstr ""
+
+#: src/admin/components/Settings.tsx
+msgid "Automatically add a \"Support the Author\" button at the end of all posts."
+msgstr ""
+
+#: src/admin/components/Settings.tsx
+msgid "Shortcodes"
+msgstr ""
+
+#: src/admin/components/Settings.tsx
+msgid "You can also add donation buttons manually using these shortcodes:"
+msgstr ""
+
+#: src/admin/components/Settings.tsx
+msgid "Or use the PayTheFly block in the Gutenberg editor."
+msgstr ""
+
+#: src/admin/components/Settings.tsx
+msgid "Webhook"
+msgstr ""
+
+#: src/admin/components/Settings.tsx
+msgid "Webhook URL"
+msgstr ""
+
+#: src/admin/components/Settings.tsx
+msgid "Copy this URL to your PayTheFly dashboard for webhook notifications."
+msgstr ""
+
+#: src/admin/components/Settings.tsx
+msgid "Saving..."
+msgstr ""
+
+#: src/admin/components/Settings.tsx
+msgid "Save Settings"
+msgstr ""

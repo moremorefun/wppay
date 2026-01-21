@@ -66,7 +66,7 @@ class Shortcode {
 			[
 				'amount'   => '',
 				'currency' => 'USDT',
-				'label'    => __( 'Pay with Crypto', 'paythefly' ),
+				'label'    => __( 'Support', 'paythefly' ),
 			],
 			$atts,
 			'paythefly_button'

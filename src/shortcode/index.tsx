@@ -1,47 +1,77 @@
 import { createRoot } from 'react-dom/client';
-import PaymentWidget from './PaymentWidget';
+import { useState } from 'react';
+import { __ } from '@wordpress/i18n';
+import { ShadowContainer } from '../shared/components/ShadowContainer';
+import { DonationModal } from '../shared/components/DonationModal';
 import './styles.css';
+
+// Inline button component that opens the donation modal
+function InlineButton() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const config = window.paytheflyFrontend;
+  const recipientName = config?.recipientName || '';
+  const recipientAvatar = config?.recipientAvatar || '';
+
+  return (
+    <>
+      <button
+        className="paythefly-inline-button"
+        onClick={() => setIsModalOpen(true)}
+      >
+        {__('Support the Author', 'paythefly')}
+      </button>
+
+      {isModalOpen && (
+        <ShadowContainer>
+          <DonationModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            recipientName={recipientName}
+            recipientAvatar={recipientAvatar}
+          />
+        </ShadowContainer>
+      )}
+    </>
+  );
+}
 
 // Initialize all payment widgets on the page
 document.addEventListener('DOMContentLoaded', () => {
-  const widgets = document.querySelectorAll<HTMLElement>('.paythefly-widget');
-
-  widgets.forEach((container) => {
-    const amount = container.dataset.amount ?? '';
-    const currency = container.dataset.currency ?? 'USDT';
-    const description = container.dataset.description ?? '';
-
+  // Initialize inline buttons (from content filter)
+  const inlineButtons = document.querySelectorAll<HTMLElement>('.paythefly-inline-button-wrapper');
+  inlineButtons.forEach((container) => {
     const root = createRoot(container);
-    root.render(
-      <PaymentWidget amount={amount} currency={currency} description={description} />
-    );
+    root.render(<InlineButton />);
   });
 
-  // Initialize payment buttons
+  // Initialize payment buttons (from shortcode)
   const buttons = document.querySelectorAll<HTMLElement>('.paythefly-button');
-
   buttons.forEach((button) => {
     button.addEventListener('click', () => {
-      const amount = button.dataset.amount ?? '';
-      const currency = button.dataset.currency ?? 'USDT';
+      const config = window.paytheflyFrontend;
 
       // Create modal container
-      const modal = document.createElement('div');
-      modal.className = 'paythefly-modal';
-      document.body.appendChild(modal);
+      const modalHost = document.createElement('div');
+      modalHost.className = 'paythefly-modal-host';
+      document.body.appendChild(modalHost);
 
-      const root = createRoot(modal);
+      const root = createRoot(modalHost);
+
+      const closeModal = () => {
+        root.unmount();
+        modalHost.remove();
+      };
+
       root.render(
-        <PaymentWidget
-          amount={amount}
-          currency={currency}
-          description=""
-          isModal={true}
-          onClose={() => {
-            root.unmount();
-            modal.remove();
-          }}
-        />
+        <ShadowContainer>
+          <DonationModal
+            isOpen={true}
+            onClose={closeModal}
+            recipientName={config?.recipientName || ''}
+            recipientAvatar={config?.recipientAvatar || ''}
+          />
+        </ShadowContainer>
       );
     });
   });

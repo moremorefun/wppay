@@ -47,6 +47,7 @@ class PayTheFly {
 		require_once PAYTHEFLY_DIR . 'includes/public/class-frontend.php';
 		require_once PAYTHEFLY_DIR . 'includes/public/class-shortcode.php';
 		require_once PAYTHEFLY_DIR . 'includes/public/class-block.php';
+		require_once PAYTHEFLY_DIR . 'includes/public/class-content-filter.php';
 
 		// API classes.
 		require_once PAYTHEFLY_DIR . 'includes/api/class-rest-api.php';
@@ -109,6 +110,7 @@ class PayTheFly {
 		add_action( 'wp_enqueue_scripts', [ $this->frontend, 'enqueue_scripts' ] );
 		add_action( 'init', [ $this->frontend, 'register_shortcodes' ] );
 		add_action( 'init', [ $this->frontend, 'register_blocks' ] );
+		add_action( 'init', [ $this->frontend, 'register_content_filter' ] );
 	}
 
 	/**
