@@ -8,7 +8,13 @@
     convertWarningsToExceptions="true"
 >
     <testsuites>
-        <testsuite name="PayTheFly Test Suite">
+        <testsuite name="Unit">
+            <directory suffix="Test.php">./tests/php/unit</directory>
+        </testsuite>
+        <testsuite name="Integration">
+            <directory suffix="Test.php">./tests/php/integration</directory>
+        </testsuite>
+        <testsuite name="All">
             <directory suffix="Test.php">./tests/php</directory>
         </testsuite>
     </testsuites>
