@@ -71,20 +71,12 @@ class PayTheFly {
 	/**
 	 * Set plugin locale for internationalization.
 	 *
+	 * Note: When hosted on WordPress.org, translations are loaded automatically.
+	 * This method now only handles JS translation file mapping for Vite-built scripts.
+	 *
 	 * @return void
 	 */
 	private function set_locale(): void {
-		add_action(
-			'init',
-			function () {
-				load_plugin_textdomain(
-					'paythefly',
-					false,
-					dirname( PAYTHEFLY_BASENAME ) . '/languages'
-				);
-			}
-		);
-
 		// Handle JS translation files for Vite-built scripts with dynamic filenames.
 		add_filter(
 			'load_script_textdomain_relative_path',

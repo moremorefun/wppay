@@ -11,6 +11,7 @@ const pluginName = 'paythefly';
 // Files and directories to include in the zip
 const includeList = [
   'paythefly.php',
+  'readme.txt',
   'includes',
   'dist',
   'languages',

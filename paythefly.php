@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name:       PayTheFly
- * Plugin URI:        https://paythefly.com
+ * Plugin URI:        https://paythefly.com/wordpress-plugin
  * Description:       Integrate PayTheFly cryptocurrency payment services into your WordPress site.
  * Version:           1.0.1
  * Requires at least: 6.0
