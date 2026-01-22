@@ -1,6 +1,6 @@
 {
   "name": "paythefly",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "PayTheFly cryptocurrency payment integration for WordPress",
   "private": true,
   "type": "module",
