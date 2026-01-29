@@ -5,11 +5,15 @@ import Save from './Save';
 import './styles.css';
 
 registerBlockType('paythefly/payment-widget', {
-  title: __('PayTheFly Payment', 'paythefly'),
-  description: __('Accept cryptocurrency payments with PayTheFly.', 'paythefly'),
+  title: __('PayTheFly Payment', 'paythefly-crypto-gateway'),
+  description: __('Accept cryptocurrency payments with PayTheFly.', 'paythefly-crypto-gateway'),
   category: 'widgets',
   icon: 'money-alt',
-  keywords: [__('payment', 'paythefly'), __('crypto', 'paythefly'), __('bitcoin', 'paythefly')],
+  keywords: [
+    __('payment', 'paythefly-crypto-gateway'),
+    __('crypto', 'paythefly-crypto-gateway'),
+    __('bitcoin', 'paythefly-crypto-gateway'),
+  ],
   attributes: {
     amount: {
       type: 'string',

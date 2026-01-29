@@ -5,7 +5,7 @@ export default function App() {
   return (
     <div className="paythefly-admin">
       <header className="paythefly-admin__header">
-        <h1>{__('PayTheFly', 'paythefly')}</h1>
+        <h1>{__('PayTheFly', 'paythefly-crypto-gateway')}</h1>
       </header>
 
       <main className="paythefly-admin__content">

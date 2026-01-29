@@ -297,7 +297,8 @@ class DatabaseIntegrationTest extends WP_UnitTestCase {
 	 */
 	public function test_large_amount_handling(): void {
 		$payment_id = 'large-amount-' . wp_generate_uuid4();
-		$amount     = 9999999999.12345678;
+		// Use string to preserve decimal precision (avoids PHP float precision loss).
+		$amount = '9999999999.12345678';
 
 		$this->db->insert_payment(
 			[

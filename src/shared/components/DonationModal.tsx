@@ -68,7 +68,7 @@ export function DonationModal({
     const numAmount = parseFloat(amount);
     if (!amount || isNaN(numAmount) || numAmount <= 0) {
       shakeCard();
-      setError(__('Please enter a valid amount', 'paythefly'));
+      setError(__('Please enter a valid amount', 'paythefly-crypto-gateway'));
       return;
     }
 
@@ -78,7 +78,7 @@ export function DonationModal({
     try {
       const config = window.paytheflyFrontend;
       if (!config?.apiUrl) {
-        throw new Error(__('Configuration error', 'paythefly'));
+        throw new Error(__('Configuration error', 'paythefly-crypto-gateway'));
       }
 
       const response = await fetch(`${config.apiUrl}/orders/create`, {
@@ -88,7 +88,7 @@ export function DonationModal({
           'X-WP-Nonce': config.nonce,
         },
         body: JSON.stringify({
-          amount: amount,
+          amount,
           chainId: NETWORKS[selectedNetwork].chainId,
           redirect: window.location.href,
         }),
@@ -96,7 +96,9 @@ export function DonationModal({
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || __('Failed to create order', 'paythefly'));
+        throw new Error(
+          errorData.message || __('Failed to create order', 'paythefly-crypto-gateway')
+        );
       }
 
       const data: CreateOrderResponse = await response.json();
@@ -119,7 +121,9 @@ export function DonationModal({
       // Redirect to payment page
       window.location.href = payUrl.toString();
     } catch (err) {
-      setError(err instanceof Error ? err.message : __('An error occurred', 'paythefly'));
+      setError(
+        err instanceof Error ? err.message : __('An error occurred', 'paythefly-crypto-gateway')
+      );
       setIsLoading(false);
     }
   };
@@ -139,28 +143,32 @@ export function DonationModal({
       <div className="ptf-bg-glow" />
 
       <div className="ptf-card" ref={cardRef}>
-        <button className="ptf-close" onClick={onClose} aria-label={__('Close', 'paythefly')}>
+        <button
+          className="ptf-close"
+          onClick={onClose}
+          aria-label={__('Close', 'paythefly-crypto-gateway')}
+        >
           ×
         </button>
 
         <div className="ptf-header">
           <div className="ptf-avatar-ring">
             {recipientAvatar ? (
-              <img
-                src={recipientAvatar}
-                alt={recipientName}
-                className="ptf-avatar"
-              />
+              <img src={recipientAvatar} alt={recipientName} className="ptf-avatar" />
             ) : (
               <div className="ptf-avatar ptf-avatar-placeholder" />
             )}
           </div>
-          <h2 className="ptf-name">{recipientName || __('Anonymous', 'paythefly')}</h2>
-          <p className="ptf-subtitle">{__('Thank you for your support', 'paythefly')}</p>
+          <h2 className="ptf-name">
+            {recipientName || __('Anonymous', 'paythefly-crypto-gateway')}
+          </h2>
+          <p className="ptf-subtitle">
+            {__('Thank you for your support', 'paythefly-crypto-gateway')}
+          </p>
         </div>
 
         <div className="ptf-section">
-          <label className="ptf-label">{__('Enter Amount', 'paythefly')}</label>
+          <label className="ptf-label">{__('Enter Amount', 'paythefly-crypto-gateway')}</label>
           <div className="ptf-input-box">
             <input
               ref={inputRef}
@@ -180,7 +188,7 @@ export function DonationModal({
         </div>
 
         <div className="ptf-section">
-          <label className="ptf-label">{__('Select Network', 'paythefly')}</label>
+          <label className="ptf-label">{__('Select Network', 'paythefly-crypto-gateway')}</label>
           <div className="ptf-chain-grid">
             {(Object.keys(NETWORKS) as NetworkKey[]).map((key) => (
               <button
@@ -196,20 +204,23 @@ export function DonationModal({
 
         {error && <div className="ptf-error">{error}</div>}
 
-        <button
-          className="ptf-pay-btn"
-          onClick={handlePay}
-          disabled={isLoading}
-        >
+        <button className="ptf-pay-btn" onClick={handlePay} disabled={isLoading}>
           {isLoading ? (
             <span className="ptf-loading">
               <span className="ptf-spinner" />
-              {__('Processing...', 'paythefly')}
+              {__('Processing…', 'paythefly-crypto-gateway')}
             </span>
           ) : (
             <>
-              <span>{__('Pay Now', 'paythefly')}</span>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <span>{__('Pay Now', 'paythefly-crypto-gateway')}</span>
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="3"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
                 <path d="M5 12h14M12 5l7 7-7 7" />
               </svg>
             </>

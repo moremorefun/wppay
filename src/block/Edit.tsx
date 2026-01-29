@@ -25,24 +25,24 @@ export default function Edit({ attributes, setAttributes }: EditProps) {
   return (
     <>
       <InspectorControls>
-        <PanelBody title={__('Payment Settings', 'paythefly')}>
+        <PanelBody title={__('Payment Settings', 'paythefly-crypto-gateway')}>
           <TextControl
-            label={__('Amount', 'paythefly')}
+            label={__('Amount', 'paythefly-crypto-gateway')}
             value={amount}
             onChange={(value: string) => setAttributes({ amount: value })}
-            placeholder={__('Enter amount', 'paythefly')}
+            placeholder={__('Enter amount', 'paythefly-crypto-gateway')}
           />
           <SelectControl
-            label={__('Currency', 'paythefly')}
+            label={__('Currency', 'paythefly-crypto-gateway')}
             value={currency}
             options={CURRENCY_OPTIONS}
             onChange={(value: string) => setAttributes({ currency: value })}
           />
           <TextControl
-            label={__('Description', 'paythefly')}
+            label={__('Description', 'paythefly-crypto-gateway')}
             value={description}
             onChange={(value: string) => setAttributes({ description: value })}
-            placeholder={__('Payment description', 'paythefly')}
+            placeholder={__('Payment description', 'paythefly-crypto-gateway')}
           />
         </PanelBody>
       </InspectorControls>
@@ -51,7 +51,7 @@ export default function Edit({ attributes, setAttributes }: EditProps) {
         <div className="paythefly-block-preview">
           <div className="paythefly-block-preview__icon">💰</div>
           <div className="paythefly-block-preview__title">
-            {__('PayTheFly Payment', 'paythefly')}
+            {__('PayTheFly Payment', 'paythefly-crypto-gateway')}
           </div>
           <div className="paythefly-block-preview__info">
             {amount ? (
@@ -60,7 +60,7 @@ export default function Edit({ attributes, setAttributes }: EditProps) {
               </span>
             ) : (
               <span className="paythefly-block-preview__placeholder">
-                {__('Configure payment in sidebar', 'paythefly')}
+                {__('Configure payment in sidebar', 'paythefly-crypto-gateway')}
               </span>
             )}
           </div>

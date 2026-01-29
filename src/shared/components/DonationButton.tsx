@@ -9,7 +9,7 @@ interface DonationButtonProps {
 }
 
 export function DonationButton({
-  label = __('Support', 'paythefly'),
+  label = __('Support', 'paythefly-crypto-gateway'),
   className = '',
 }: DonationButtonProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);

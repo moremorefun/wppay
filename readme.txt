@@ -1,10 +1,10 @@
-=== PayTheFly ===
-Contributors: paytheflyteam
+=== PayTheFly Crypto Gateway ===
+Contributors: paythefly
 Donate link: https://paythefly.com
 Tags: cryptocurrency, payment, crypto, bitcoin, ethereum
 Requires at least: 6.0
 Tested up to: 6.9
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -37,7 +37,7 @@ PayTheFly supports various popular cryptocurrencies through its payment gateway.
 
 == Installation ==
 
-1. Upload the `paythefly` folder to the `/wp-content/plugins/` directory
+1. Upload the `paythefly-crypto-gateway` folder to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
 3. Go to Settings > PayTheFly to configure your API credentials
 
@@ -59,7 +59,7 @@ This is a standalone payment plugin. For WooCommerce integration, please check o
 
 You can use:
 * The PayTheFly Gutenberg block in the block editor
-* The `[paythefly]` shortcode in the classic editor
+* The `[paythefly-crypto-gateway]` shortcode in the classic editor
 * The automatic content filter feature
 
 == Screenshots ==
@@ -70,7 +70,7 @@ You can use:
 
 == Changelog ==
 
-= 1.0.1 =
+= 1.0.2 =
 * Improved security for REST API and database queries
 * Added i18n support for JS translations
 
@@ -79,7 +79,7 @@ You can use:
 
 == Upgrade Notice ==
 
-= 1.0.1 =
+= 1.0.2 =
 Security improvements and i18n support added.
 
 == Privacy Policy ==

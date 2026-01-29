@@ -1,20 +1,26 @@
 import { test, expect } from '@playwright/test';
 
+// Increase timeout for admin tests and run serially to avoid session conflicts
+test.describe.configure({ timeout: 60000, mode: 'serial' });
+
 test.describe('Admin Settings', () => {
   test.beforeEach(async ({ page }) => {
-    // Login to WordPress admin
-    await page.goto('/wp-admin');
+    // Login to WordPress admin with retry handling
+    await page.goto('/wp-login.php');
+    // Wait for login form to be ready
+    await page.waitForSelector('#user_login');
     await page.fill('#user_login', 'admin');
     await page.fill('#user_pass', 'password');
     await page.click('#wp-submit');
-    await page.waitForURL(/\/wp-admin\//);
+    // Wait for redirect to complete
+    await page.waitForURL(/\/wp-admin/, { timeout: 30000 });
   });
 
   test('settings page loads', async ({ page }) => {
-    await page.goto('/wp-admin/admin.php?page=paythefly-settings');
+    await page.goto('/wp-admin/admin.php?page=paythefly');
 
     // Settings container should be visible
-    const settingsContainer = page.locator('#paythefly-settings-app');
+    const settingsContainer = page.locator('#paythefly-admin-app');
     await expect(settingsContainer).toBeVisible();
   });
 
@@ -30,10 +36,10 @@ test.describe('Admin Settings', () => {
   });
 
   test('settings form has required fields', async ({ page }) => {
-    await page.goto('/wp-admin/admin.php?page=paythefly-settings');
+    await page.goto('/wp-admin/admin.php?page=paythefly');
 
     // Wait for React app to load
-    await page.waitForSelector('#paythefly-settings-app');
+    await page.waitForSelector('#paythefly-admin-app');
     await page.waitForTimeout(500);
 
     // Check for project ID field
@@ -42,10 +48,10 @@ test.describe('Admin Settings', () => {
   });
 
   test('can update project ID', async ({ page }) => {
-    await page.goto('/wp-admin/admin.php?page=paythefly-settings');
+    await page.goto('/wp-admin/admin.php?page=paythefly');
 
     // Wait for app to load
-    await page.waitForSelector('#paythefly-settings-app');
+    await page.waitForSelector('#paythefly-admin-app');
     await page.waitForTimeout(500);
 
     // Find and fill project ID input
@@ -58,10 +64,10 @@ test.describe('Admin Settings', () => {
   });
 
   test('shows success message on save', async ({ page }) => {
-    await page.goto('/wp-admin/admin.php?page=paythefly-settings');
+    await page.goto('/wp-admin/admin.php?page=paythefly');
 
     // Wait for app to load
-    await page.waitForSelector('#paythefly-settings-app');
+    await page.waitForSelector('#paythefly-admin-app');
     await page.waitForTimeout(500);
 
     // Look for save button
@@ -91,10 +97,10 @@ test.describe('Admin Settings', () => {
   });
 
   test('settings persist after reload', async ({ page }) => {
-    await page.goto('/wp-admin/admin.php?page=paythefly-settings');
+    await page.goto('/wp-admin/admin.php?page=paythefly');
 
     // Wait for app to load
-    await page.waitForSelector('#paythefly-settings-app');
+    await page.waitForSelector('#paythefly-admin-app');
     await page.waitForTimeout(500);
 
     // Find project ID input
@@ -114,7 +120,7 @@ test.describe('Admin Settings', () => {
 
       // Reload page
       await page.reload();
-      await page.waitForSelector('#paythefly-settings-app');
+      await page.waitForSelector('#paythefly-admin-app');
       await page.waitForTimeout(500);
 
       // Check value persisted
@@ -126,10 +132,10 @@ test.describe('Admin Settings', () => {
   });
 
   test('fab toggle works', async ({ page }) => {
-    await page.goto('/wp-admin/admin.php?page=paythefly-settings');
+    await page.goto('/wp-admin/admin.php?page=paythefly');
 
     // Wait for app to load
-    await page.waitForSelector('#paythefly-settings-app');
+    await page.waitForSelector('#paythefly-admin-app');
     await page.waitForTimeout(500);
 
     // Look for FAB toggle

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<ruleset name="PayTheFly Coding Standards">
-    <description>Custom WordPress Coding Standards for PayTheFly plugin</description>
+<ruleset name="PayTheFly Crypto Gateway Coding Standards">
+    <description>Custom WordPress Coding Standards for PayTheFly Crypto Gateway plugin</description>
 
     <!-- What to scan -->
     <file>.</file>
@@ -33,7 +33,7 @@
     <rule ref="WordPress.WP.I18n">
         <properties>
             <property name="text_domain" type="array">
-                <element value="paythefly"/>
+                <element value="paythefly-crypto-gateway"/>
             </property>
         </properties>
     </rule>

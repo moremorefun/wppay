@@ -33,7 +33,7 @@ class PayTheFlyTest extends WP_UnitTestCase {
 	 * @return void
 	 */
 	public function test_plugin_version(): void {
-		$this->assertEquals( '1.0.0', PAYTHEFLY_VERSION );
+		$this->assertEquals( '1.0.2', PAYTHEFLY_VERSION );
 	}
 
 	/**

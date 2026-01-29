@@ -1,6 +1,6 @@
 {
-  "name": "paythefly/paythefly",
-  "description": "PayTheFly cryptocurrency payment integration for WordPress",
+  "name": "paythefly/paythefly-crypto-gateway",
+  "description": "PayTheFly Crypto Gateway - cryptocurrency payment integration for WordPress",
   "type": "wordpress-plugin",
   "license": "GPL-2.0-or-later",
   "authors": [

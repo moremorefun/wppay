@@ -60,9 +60,15 @@ export default function Settings() {
         method: 'POST',
         data: settings,
       });
-      setMessage({ type: 'success', text: __('Settings saved successfully.', 'paythefly') });
+      setMessage({
+        type: 'success',
+        text: __('Settings saved successfully.', 'paythefly-crypto-gateway'),
+      });
     } catch (error) {
-      setMessage({ type: 'error', text: __('Failed to save settings.', 'paythefly') });
+      setMessage({
+        type: 'error',
+        text: __('Failed to save settings.', 'paythefly-crypto-gateway'),
+      });
     } finally {
       setSaving(false);
     }
@@ -82,7 +88,7 @@ export default function Settings() {
 
   return (
     <div className="paythefly-settings">
-      <h2>{__('Settings', 'paythefly')}</h2>
+      <h2>{__('Settings', 'paythefly-crypto-gateway')}</h2>
 
       {message && (
         <div className={`paythefly-notice paythefly-notice--${message.type}`}>{message.text}</div>
@@ -90,59 +96,68 @@ export default function Settings() {
 
       <form className="paythefly-settings__form" onSubmit={handleSubmit}>
         <div className="paythefly-settings__section">
-          <h3>{__('API Configuration', 'paythefly')}</h3>
+          <h3>{__('API Configuration', 'paythefly-crypto-gateway')}</h3>
           <p className="paythefly-settings__intro">
-            {__('To get your Project ID and Project Key, create a project at', 'paythefly')}{' '}
+            {__(
+              'To get your Project ID and Project Key, create a project at',
+              'paythefly-crypto-gateway'
+            )}{' '}
             <a href="https://paythefly.com/" target="_blank" rel="noopener noreferrer">
               paythefly.com
             </a>
           </p>
 
           <div className="paythefly-settings__field">
-            <label htmlFor="project_id">{__('Project ID', 'paythefly')}</label>
+            <label htmlFor="project_id">{__('Project ID', 'paythefly-crypto-gateway')}</label>
             <input
               type="text"
               id="project_id"
               value={settings.project_id}
               onChange={(e) => handleChange('project_id', e.target.value)}
-              placeholder={__('Enter your PayTheFly Project ID', 'paythefly')}
+              placeholder={__('Enter your PayTheFly Project ID', 'paythefly-crypto-gateway')}
             />
             <p className="description">
-              {__('Your unique project identifier from PayTheFly dashboard.', 'paythefly')}
+              {__(
+                'Your unique project identifier from PayTheFly dashboard.',
+                'paythefly-crypto-gateway'
+              )}
             </p>
           </div>
 
           <div className="paythefly-settings__field">
-            <label htmlFor="project_key">{__('Project Key', 'paythefly')}</label>
+            <label htmlFor="project_key">{__('Project Key', 'paythefly-crypto-gateway')}</label>
             <input
               type="password"
               id="project_key"
               value={settings.project_key}
               onChange={(e) => handleChange('project_key', e.target.value)}
-              placeholder={__('Enter your PayTheFly Project Key', 'paythefly')}
+              placeholder={__('Enter your PayTheFly Project Key', 'paythefly-crypto-gateway')}
             />
             <p className="description">
-              {__('Your secret key for API authentication.', 'paythefly')}
+              {__('Your secret key for API authentication.', 'paythefly-crypto-gateway')}
             </p>
           </div>
 
           <div className="paythefly-settings__field">
-            <label htmlFor="brand">{__('Brand Name', 'paythefly')}</label>
+            <label htmlFor="brand">{__('Brand Name', 'paythefly-crypto-gateway')}</label>
             <input
               type="text"
               id="brand"
               value={settings.brand}
               onChange={(e) => handleChange('brand', e.target.value)}
-              placeholder={__('Enter your brand name (optional)', 'paythefly')}
+              placeholder={__('Enter your brand name (optional)', 'paythefly-crypto-gateway')}
             />
             <p className="description">
-              {__('Display name shown to donors. Defaults to admin display name if empty.', 'paythefly')}
+              {__(
+                'Display name shown to donors. Defaults to admin display name if empty.',
+                'paythefly-crypto-gateway'
+              )}
             </p>
           </div>
         </div>
 
         <div className="paythefly-settings__section">
-          <h3>{__('Display Options', 'paythefly')}</h3>
+          <h3>{__('Display Options', 'paythefly-crypto-gateway')}</h3>
 
           <div className="paythefly-settings__field paythefly-settings__field--checkbox">
             <label>
@@ -151,10 +166,13 @@ export default function Settings() {
                 checked={settings.fab_enabled}
                 onChange={(e) => handleChange('fab_enabled', e.target.checked)}
               />
-              <span>{__('Enable Floating Action Button (FAB)', 'paythefly')}</span>
+              <span>{__('Enable Floating Action Button (FAB)', 'paythefly-crypto-gateway')}</span>
             </label>
             <p className="description">
-              {__('Show a floating donation button in the bottom-right corner of all pages.', 'paythefly')}
+              {__(
+                'Show a floating donation button in the bottom-right corner of all pages.',
+                'paythefly-crypto-gateway'
+              )}
             </p>
           </div>
 
@@ -165,19 +183,22 @@ export default function Settings() {
                 checked={settings.inline_button_auto}
                 onChange={(e) => handleChange('inline_button_auto', e.target.checked)}
               />
-              <span>{__('Auto-add button to post content', 'paythefly')}</span>
+              <span>{__('Auto-add button to post content', 'paythefly-crypto-gateway')}</span>
             </label>
             <p className="description">
-              {__('Automatically add a "Support the Author" button at the end of all posts.', 'paythefly')}
+              {__(
+                'Automatically add a "Support the Author" button at the end of all posts.',
+                'paythefly-crypto-gateway'
+              )}
             </p>
           </div>
         </div>
 
         <div className="paythefly-settings__section">
-          <h3>{__('Webhook', 'paythefly')}</h3>
+          <h3>{__('Webhook', 'paythefly-crypto-gateway')}</h3>
 
           <div className="paythefly-settings__field">
-            <label htmlFor="webhook_url">{__('Webhook URL', 'paythefly')}</label>
+            <label htmlFor="webhook_url">{__('Webhook URL', 'paythefly-crypto-gateway')}</label>
             <input
               type="text"
               id="webhook_url"
@@ -185,14 +206,19 @@ export default function Settings() {
               readOnly
             />
             <p className="description">
-              {__('Copy this URL to your PayTheFly dashboard for webhook notifications.', 'paythefly')}
+              {__(
+                'Copy this URL to your PayTheFly dashboard for webhook notifications.',
+                'paythefly-crypto-gateway'
+              )}
             </p>
           </div>
         </div>
 
         <div className="paythefly-settings__actions">
           <button type="submit" className="paythefly-button" disabled={saving}>
-            {saving ? __('Saving...', 'paythefly') : __('Save Settings', 'paythefly')}
+            {saving
+              ? __('Saving…', 'paythefly-crypto-gateway')
+              : __('Save Settings', 'paythefly-crypto-gateway')}
           </button>
         </div>
       </form>

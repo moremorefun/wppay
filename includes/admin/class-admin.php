@@ -35,8 +35,8 @@ class Admin {
 	 */
 	public function add_admin_menu(): void {
 		add_menu_page(
-			__( 'PayTheFly Settings', 'paythefly' ),
-			__( 'PayTheFly', 'paythefly' ),
+			__( 'PayTheFly Settings', 'paythefly-crypto-gateway' ),
+			__( 'PayTheFly', 'paythefly-crypto-gateway' ),
 			'manage_options',
 			'paythefly',
 			[ $this->settings, 'render_settings_page' ],
@@ -70,7 +70,7 @@ class Admin {
 
 		wp_set_script_translations(
 			'paythefly-admin',
-			'paythefly',
+			'paythefly-crypto-gateway',
 			PAYTHEFLY_DIR . 'languages'
 		);
 

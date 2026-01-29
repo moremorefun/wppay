@@ -30,6 +30,7 @@ class DatabaseTest extends WP_UnitTestCase {
 	public function setUp(): void {
 		parent::setUp();
 		$this->db = new Database();
+		$this->db->create_tables();
 	}
 
 	/**

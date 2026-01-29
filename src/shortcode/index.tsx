@@ -15,11 +15,8 @@ function InlineButton() {
 
   return (
     <>
-      <button
-        className="paythefly-inline-button"
-        onClick={() => setIsModalOpen(true)}
-      >
-        {__('Support the Author', 'paythefly')}
+      <button className="paythefly-inline-button" onClick={() => setIsModalOpen(true)}>
+        {__('Support the Author', 'paythefly-crypto-gateway')}
       </button>
 
       {isModalOpen && (

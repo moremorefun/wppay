@@ -1,13 +1,42 @@
 import '@testing-library/jest-dom';
-import { afterAll, afterEach, beforeAll } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach } from 'vitest';
 import { setupServer } from 'msw/node';
 import { handlers } from './mocks/handlers';
 
 // Setup MSW server
 export const server = setupServer(...handlers);
 
+// Store original location
+const originalLocation = window.location;
+
 beforeAll(() => server.listen({ onUnhandledRequest: 'bypass' }));
-afterEach(() => server.resetHandlers());
+
+beforeEach(() => {
+  // Mock window.location to avoid jsdom navigation errors
+  Object.defineProperty(window, 'location', {
+    value: {
+      ...originalLocation,
+      href: 'http://localhost:8888/',
+      origin: 'http://localhost:8888',
+      assign: () => {},
+      replace: () => {},
+      reload: () => {},
+    },
+    writable: true,
+    configurable: true,
+  });
+});
+
+afterEach(() => {
+  server.resetHandlers();
+  // Restore original location
+  Object.defineProperty(window, 'location', {
+    value: originalLocation,
+    writable: true,
+    configurable: true,
+  });
+});
+
 afterAll(() => server.close());
 
 // Extend global types for test environment

@@ -1,20 +1,26 @@
 import { test, expect } from '@playwright/test';
 
+// Increase timeout for admin tests and run serially to avoid session conflicts
+test.describe.configure({ timeout: 60000, mode: 'serial' });
+
 test.describe('PayTheFly Plugin', () => {
   test.beforeEach(async ({ page }) => {
     // Login to WordPress admin
-    await page.goto('/wp-admin');
+    await page.goto('/wp-login.php');
+    await page.waitForSelector('#user_login');
     await page.fill('#user_login', 'admin');
     await page.fill('#user_pass', 'password');
     await page.click('#wp-submit');
-    await page.waitForURL(/\/wp-admin\//);
+    await page.waitForURL(/\/wp-admin/, { timeout: 30000 });
   });
 
   test('plugin is activated', async ({ page }) => {
     await page.goto('/wp-admin/plugins.php');
-    const paythefly = page.locator('tr[data-slug="paythefly"]');
+    // Look for the plugin by its name in the table
+    const paythefly = page.locator('tr:has-text("PayTheFly Crypto Gateway")');
     await expect(paythefly).toBeVisible();
-    await expect(paythefly.locator('.deactivate')).toBeVisible();
+    // Check deactivate link is visible (means plugin is active)
+    await expect(paythefly.locator('a:has-text("禁用"), a:has-text("Deactivate")')).toBeVisible();
   });
 
   test('admin menu is visible', async ({ page }) => {
@@ -30,7 +36,7 @@ test.describe('PayTheFly Plugin', () => {
   });
 
   test('settings page loads', async ({ page }) => {
-    await page.goto('/wp-admin/admin.php?page=paythefly-settings');
-    await expect(page.locator('#paythefly-settings-app')).toBeVisible();
+    await page.goto('/wp-admin/admin.php?page=paythefly');
+    await expect(page.locator('#paythefly-admin-app')).toBeVisible();
   });
 });

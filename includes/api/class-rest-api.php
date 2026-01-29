@@ -134,7 +134,7 @@ class RestApi {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'You do not have permission to access this endpoint.', 'paythefly' ),
+				__( 'You do not have permission to access this endpoint.', 'paythefly-crypto-gateway' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -239,7 +239,7 @@ class RestApi {
 		if ( ! is_numeric( $amount ) || floatval( $amount ) <= 0 ) {
 			return new WP_Error(
 				'invalid_amount',
-				__( 'Invalid amount.', 'paythefly' ),
+				__( 'Invalid amount.', 'paythefly-crypto-gateway' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -248,7 +248,7 @@ class RestApi {
 		if ( ! isset( self::USDT_ADDRESSES[ $chain_id ] ) ) {
 			return new WP_Error(
 				'invalid_chain',
-				__( 'Invalid chain ID.', 'paythefly' ),
+				__( 'Invalid chain ID.', 'paythefly-crypto-gateway' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -260,7 +260,7 @@ class RestApi {
 		if ( empty( $project_id ) ) {
 			return new WP_Error(
 				'missing_project_id',
-				__( 'Project ID is not configured.', 'paythefly' ),
+				__( 'Project ID is not configured.', 'paythefly-crypto-gateway' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -293,7 +293,7 @@ class RestApi {
 		if ( empty( $data ) || empty( $sign ) ) {
 			return new WP_Error(
 				'missing_params',
-				__( 'Missing data or sign parameter.', 'paythefly' ),
+				__( 'Missing data or sign parameter.', 'paythefly-crypto-gateway' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -304,7 +304,7 @@ class RestApi {
 		if ( empty( $project_key ) ) {
 			return new WP_Error(
 				'not_configured',
-				__( 'Project key not configured.', 'paythefly' ),
+				__( 'Project key not configured.', 'paythefly-crypto-gateway' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -314,7 +314,7 @@ class RestApi {
 		if ( ! hash_equals( $expected_sign, $sign ) ) {
 			return new WP_Error(
 				'invalid_signature',
-				__( 'Invalid signature.', 'paythefly' ),
+				__( 'Invalid signature.', 'paythefly-crypto-gateway' ),
 				[ 'status' => 401 ]
 			);
 		}
@@ -324,7 +324,7 @@ class RestApi {
 		if ( json_last_error() !== JSON_ERROR_NONE ) {
 			return new WP_Error(
 				'invalid_json',
-				__( 'Invalid JSON in data.', 'paythefly' ),
+				__( 'Invalid JSON in data.', 'paythefly-crypto-gateway' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -334,7 +334,7 @@ class RestApi {
 		if ( ( $payload['project_id'] ?? '' ) !== $project_id ) {
 			return new WP_Error(
 				'project_mismatch',
-				__( 'Project ID mismatch.', 'paythefly' ),
+				__( 'Project ID mismatch.', 'paythefly-crypto-gateway' ),
 				[ 'status' => 403 ]
 			);
 		}

@@ -76,7 +76,7 @@ class Database {
 				'description' => $data['description'] ?? '',
 				'metadata'    => isset( $data['metadata'] ) ? wp_json_encode( $data['metadata'] ) : null,
 			],
-			[ '%s', '%f', '%s', '%s', '%s', '%s' ]
+			[ '%s', '%s', '%s', '%s', '%s', '%s' ]
 		);
 
 		return $result ? $wpdb->insert_id : false;
