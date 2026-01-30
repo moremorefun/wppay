@@ -72,6 +72,7 @@ class Database {
 	public function insert_payment( array $data ) {
 		global $wpdb;
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Custom table for plugin data.
 		$result = $wpdb->insert(
 			$this->get_table_name(),
 			array(
@@ -103,6 +104,7 @@ class Database {
 	public function update_status( string $payment_id, string $status ): bool {
 		global $wpdb;
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Custom table for plugin data.
 		$result = $wpdb->update(
 			$this->get_table_name(),
 			array( 'status' => $status ),
@@ -135,13 +137,17 @@ class Database {
 			return $payment ? $payment : null;
 		}
 
+		$table_name = $this->get_table_name();
+
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		// Table name is safe - generated from $wpdb->prefix constant. Custom table for plugin data.
 		$payment = $wpdb->get_row(
 			$wpdb->prepare(
-				'SELECT * FROM %i WHERE payment_id = %s',
-				$this->get_table_name(),
+				"SELECT * FROM `{$table_name}` WHERE payment_id = %s",
 				$payment_id
 			)
 		);
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		wp_cache_set( $cache_key, $payment ? $payment : '', self::CACHE_GROUP, HOUR_IN_SECONDS );
 
@@ -168,11 +174,12 @@ class Database {
 			return $cached;
 		}
 
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		// Table name is safe - generated from $wpdb->prefix constant. Custom table for plugin data.
 		if ( ! empty( $status ) ) {
 			$items = $wpdb->get_results(
 				$wpdb->prepare(
-					'SELECT * FROM %i WHERE status = %s ORDER BY created_at DESC LIMIT %d OFFSET %d',
-					$table_name,
+					"SELECT * FROM `{$table_name}` WHERE status = %s ORDER BY created_at DESC LIMIT %d OFFSET %d",
 					$status,
 					$per_page,
 					$offset
@@ -181,28 +188,24 @@ class Database {
 
 			$total = $wpdb->get_var(
 				$wpdb->prepare(
-					'SELECT COUNT(*) FROM %i WHERE status = %s',
-					$table_name,
+					"SELECT COUNT(*) FROM `{$table_name}` WHERE status = %s",
 					$status
 				)
 			);
 		} else {
 			$items = $wpdb->get_results(
 				$wpdb->prepare(
-					'SELECT * FROM %i ORDER BY created_at DESC LIMIT %d OFFSET %d',
-					$table_name,
+					"SELECT * FROM `{$table_name}` ORDER BY created_at DESC LIMIT %d OFFSET %d",
 					$per_page,
 					$offset
 				)
 			);
 
 			$total = $wpdb->get_var(
-				$wpdb->prepare(
-					'SELECT COUNT(*) FROM %i',
-					$table_name
-				)
+				"SELECT COUNT(*) FROM `{$table_name}`"
 			);
 		}
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		$result = array(
 			'items' => $items ? $items : array(),
