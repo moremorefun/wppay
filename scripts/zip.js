@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const rootDir = join(__dirname, '..');
 const buildDir = join(rootDir, 'build');
-const pluginName = 'paythefly';
+const pluginName = 'paythefly-crypto-gateway';
 
 // Files and directories to include in the zip
 const includeList = [
