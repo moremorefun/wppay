@@ -41,3 +41,6 @@ test-results/
 *.log
 *.cache
 .eslintcache
+
+# SVN
+svn/
