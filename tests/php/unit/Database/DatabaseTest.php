@@ -41,11 +41,11 @@ class DatabaseTest extends WP_UnitTestCase {
 	public function test_table_name_uses_wp_prefix(): void {
 		global $wpdb;
 
-		// Use reflection to access private property.
+		// Use reflection to access private method.
 		$reflection = new \ReflectionClass( $this->db );
-		$property   = $reflection->getProperty( 'table_name' );
-		$property->setAccessible( true );
-		$table_name = $property->getValue( $this->db );
+		$method     = $reflection->getMethod( 'get_table_name' );
+		$method->setAccessible( true );
+		$table_name = $method->invoke( $this->db );
 
 		$this->assertStringStartsWith( $wpdb->prefix, $table_name );
 		$this->assertEquals( $wpdb->prefix . 'paythefly_payments', $table_name );
