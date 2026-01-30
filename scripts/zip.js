@@ -10,7 +10,7 @@ const pluginName = 'paythefly-crypto-gateway';
 
 // Files and directories to include in the zip
 const includeList = [
-  'paythefly.php',
+  'paythefly-crypto-gateway.php',
   'readme.txt',
   'includes',
   'dist',

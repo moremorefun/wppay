@@ -17,16 +17,16 @@
   align-items: center;
   justify-content: center;
   box-shadow:
-    0 4px 12px rgba(0, 255, 163, 0.3),
-    0 2px 4px rgba(0, 0, 0, 0.1);
+    0 4px 12px rgb(0 255 163 / 30%),
+    0 2px 4px rgb(0 0 0 / 10%);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .paythefly-fab:hover {
   transform: scale(1.1);
   box-shadow:
-    0 6px 20px rgba(0, 255, 163, 0.4),
-    0 4px 8px rgba(0, 0, 0, 0.15);
+    0 6px 20px rgb(0 255 163 / 40%),
+    0 4px 8px rgb(0 0 0 / 15%);
 }
 
 .paythefly-fab:active {
@@ -42,7 +42,7 @@
 }
 
 /* Mobile adjustments */
-@media (max-width: 768px) {
+@media (width <= 768px) {
   #paythefly-fab-container {
     bottom: 16px;
     right: 16px;

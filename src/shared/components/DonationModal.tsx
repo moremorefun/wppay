@@ -139,6 +139,7 @@ export function DonationModal({
   }
 
   return (
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
     <div className="ptf-overlay" onClick={handleOverlayClick}>
       <div className="ptf-bg-glow" />
 
@@ -168,11 +169,14 @@ export function DonationModal({
         </div>
 
         <div className="ptf-section">
-          <label className="ptf-label">{__('Enter Amount', 'paythefly-crypto-gateway')}</label>
+          <label htmlFor="ptf-amount" className="ptf-label">
+            {__('Enter Amount', 'paythefly-crypto-gateway')}
+          </label>
           <div className="ptf-input-box">
             <input
               ref={inputRef}
               type="number"
+              id="ptf-amount"
               className="ptf-input"
               placeholder="0.00"
               value={amount}
@@ -188,7 +192,7 @@ export function DonationModal({
         </div>
 
         <div className="ptf-section">
-          <label className="ptf-label">{__('Select Network', 'paythefly-crypto-gateway')}</label>
+          <span className="ptf-label">{__('Select Network', 'paythefly-crypto-gateway')}</span>
           <div className="ptf-chain-grid">
             {(Object.keys(NETWORKS) as NetworkKey[]).map((key) => (
               <button

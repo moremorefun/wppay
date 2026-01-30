@@ -9,6 +9,9 @@
     <exclude-pattern>/dist/</exclude-pattern>
     <exclude-pattern>/tests/</exclude-pattern>
     <exclude-pattern>/.wp-env/</exclude-pattern>
+    <exclude-pattern>/mu-plugins/</exclude-pattern>
+    <exclude-pattern>/build/</exclude-pattern>
+    <exclude-pattern>/includes/vite-for-wp.php</exclude-pattern>
 
     <!-- How to scan -->
     <arg value="sp"/>

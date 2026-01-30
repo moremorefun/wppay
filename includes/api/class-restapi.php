@@ -249,6 +249,7 @@ class RestApi {
 	 */
 	private const USDT_ADDRESSES = array(
 		728126428 => 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t', // TRON Mainnet.
+		// phpcs:ignore PHPCompatibility.Miscellaneous.ValidIntegers.HexNumericStringFound -- Ethereum address, not a numeric string.
 		56        => '0x55d398326f99059fF775485246999027B3197955', // BSC Mainnet.
 	);
 

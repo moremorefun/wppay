@@ -4,7 +4,7 @@ Donate link: https://paythefly.com
 Tags: cryptocurrency, payment, crypto, bitcoin, ethereum
 Requires at least: 6.0
 Tested up to: 6.9
-Stable tag: 1.0.5
+Stable tag: 1.0.6
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -69,6 +69,9 @@ You can use:
 3. Frontend payment button
 
 == Changelog ==
+
+= 1.0.6 =
+* Renamed main plugin file to follow WordPress naming convention (paythefly-crypto-gateway.php)
 
 = 1.0.5 =
 * Fixed database queries for WordPress < 6.2 compatibility (replaced %i placeholder)

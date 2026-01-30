@@ -57,6 +57,6 @@ node scripts/zip.js     # 打包成 zip (build/paythefly-crypto-gateway.zip)
 ## 版本
 
 更新版本时需要修改以下文件：
-- `paythefly.php` (Plugin header + PAYTHEFLY_VERSION constant)
+- `paythefly-crypto-gateway.php` (Plugin header + PAYTHEFLY_VERSION constant)
 - `readme.txt` (Stable tag + Changelog)
 - `tests/php/PayTheFlyTest.php` (version assertion)

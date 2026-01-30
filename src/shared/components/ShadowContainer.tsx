@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+// eslint-disable-next-line import/no-unresolved
 import modalStyles from '../styles/modal.css?inline';
 
 interface ShadowContainerProps {

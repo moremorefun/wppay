@@ -160,9 +160,10 @@ export default function Settings() {
           <h3>{__('Display Options', 'paythefly-crypto-gateway')}</h3>
 
           <div className="paythefly-settings__field paythefly-settings__field--checkbox">
-            <label>
+            <label htmlFor="fab_enabled">
               <input
                 type="checkbox"
+                id="fab_enabled"
                 checked={settings.fab_enabled}
                 onChange={(e) => handleChange('fab_enabled', e.target.checked)}
               />
@@ -177,9 +178,10 @@ export default function Settings() {
           </div>
 
           <div className="paythefly-settings__field paythefly-settings__field--checkbox">
-            <label>
+            <label htmlFor="inline_button_auto">
               <input
                 type="checkbox"
+                id="inline_button_auto"
                 checked={settings.inline_button_auto}
                 onChange={(e) => handleChange('inline_button_auto', e.target.checked)}
               />
