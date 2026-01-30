@@ -5,12 +5,12 @@
  * @package PayTheFly
  */
 
+namespace PayTheFly\Frontend;
+
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
-
-namespace PayTheFly\Frontend;
 
 /**
  * Handles automatic content filtering to add donation button.
@@ -23,7 +23,7 @@ class ContentFilter {
 	 * @return void
 	 */
 	public function register(): void {
-		add_filter( 'the_content', [ $this, 'append_donation_button' ], 100 );
+		add_filter( 'the_content', array( $this, 'append_donation_button' ), 100 );
 	}
 
 	/**
@@ -39,7 +39,7 @@ class ContentFilter {
 		}
 
 		// Check if auto-add is enabled.
-		$settings = get_option( 'paythefly_settings', [] );
+		$settings = get_option( 'paythefly_settings', array() );
 		if ( empty( $settings['inline_button_auto'] ) ) {
 			return $content;
 		}

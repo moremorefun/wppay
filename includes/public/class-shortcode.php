@@ -18,8 +18,8 @@ class Shortcode {
 	 * @return void
 	 */
 	public function register(): void {
-		add_shortcode( 'paythefly-crypto-gateway', [ $this, 'render' ] );
-		add_shortcode( 'paythefly-crypto-gateway-button', [ $this, 'render_button' ] );
+		add_shortcode( 'paythefly-crypto-gateway', array( $this, 'render' ) );
+		add_shortcode( 'paythefly-crypto-gateway-button', array( $this, 'render_button' ) );
 	}
 
 	/**
@@ -30,11 +30,11 @@ class Shortcode {
 	 */
 	public function render( $atts ): string {
 		$atts = shortcode_atts(
-			[
+			array(
 				'amount'      => '',
 				'currency'    => 'USDT',
 				'description' => '',
-			],
+			),
 			$atts,
 			'paythefly-crypto-gateway'
 		);
@@ -63,11 +63,11 @@ class Shortcode {
 	 */
 	public function render_button( $atts ): string {
 		$atts = shortcode_atts(
-			[
+			array(
 				'amount'   => '',
 				'currency' => 'USDT',
 				'label'    => __( 'Support', 'paythefly-crypto-gateway' ),
-			],
+			),
 			$atts,
 			'paythefly-crypto-gateway-button'
 		);

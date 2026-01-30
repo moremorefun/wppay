@@ -50,10 +50,15 @@ class Frontend {
 	 * @return array<string, mixed>
 	 */
 	private function get_donation_config(): array {
-		$settings = get_option( 'paythefly_settings', [] );
+		$settings = get_option( 'paythefly_settings', array() );
 
 		// Get admin user info for recipient display.
-		$admin_users = get_users( [ 'role' => 'administrator', 'number' => 1 ] );
+		$admin_users = get_users(
+			array(
+				'role'   => 'administrator',
+				'number' => 1,
+			)
+		);
 		$admin_user  = ! empty( $admin_users ) ? $admin_users[0] : null;
 
 		$recipient_name   = $settings['brand'] ?? '';
@@ -63,10 +68,10 @@ class Frontend {
 			if ( empty( $recipient_name ) ) {
 				$recipient_name = $admin_user->display_name;
 			}
-			$recipient_avatar = get_avatar_url( $admin_user->ID, [ 'size' => 160 ] );
+			$recipient_avatar = get_avatar_url( $admin_user->ID, array( 'size' => 160 ) );
 		}
 
-		return [
+		return array(
 			'apiUrl'          => rest_url( 'paythefly/v1' ),
 			'nonce'           => wp_create_nonce( 'wp_rest' ),
 			'projectId'       => $settings['project_id'] ?? '',
@@ -74,7 +79,7 @@ class Frontend {
 			'fabEnabled'      => $settings['fab_enabled'] ?? true,
 			'recipientName'   => $recipient_name,
 			'recipientAvatar' => $recipient_avatar,
-		];
+		);
 	}
 
 	/**
@@ -87,11 +92,11 @@ class Frontend {
 		Vite\register_asset(
 			PAYTHEFLY_DIR . 'dist',
 			'src/shortcode/index.tsx',
-			[
+			array(
 				'handle'       => 'paythefly-shortcode',
-				'dependencies' => [ 'react', 'react-dom', 'wp-i18n' ],
+				'dependencies' => array( 'react', 'react-dom', 'wp-i18n' ),
 				'in-footer'    => true,
-			]
+			)
 		);
 
 		wp_set_script_translations(
@@ -109,7 +114,7 @@ class Frontend {
 		);
 
 		// Enqueue FAB if enabled.
-		$settings = get_option( 'paythefly_settings', [] );
+		$settings = get_option( 'paythefly_settings', array() );
 		if ( ! empty( $settings['fab_enabled'] ) && ! empty( $settings['project_id'] ) ) {
 			$this->enqueue_fab_scripts( $config );
 		}
@@ -125,11 +130,11 @@ class Frontend {
 		Vite\enqueue_asset(
 			PAYTHEFLY_DIR . 'dist',
 			'src/fab/index.tsx',
-			[
+			array(
 				'handle'       => 'paythefly-fab',
-				'dependencies' => [ 'react', 'react-dom', 'wp-i18n' ],
+				'dependencies' => array( 'react', 'react-dom', 'wp-i18n' ),
 				'in-footer'    => true,
-			]
+			)
 		);
 
 		wp_set_script_translations(

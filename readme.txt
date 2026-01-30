@@ -4,7 +4,7 @@ Donate link: https://paythefly.com
 Tags: cryptocurrency, payment, crypto, bitcoin, ethereum
 Requires at least: 6.0
 Tested up to: 6.9
-Stable tag: 1.0.3
+Stable tag: 1.0.4
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -70,6 +70,11 @@ You can use:
 
 == Changelog ==
 
+= 1.0.4 =
+* Fixed PHP syntax errors: namespace/declare statements now correctly placed before ABSPATH check
+* Added source code documentation with GitHub repository link
+* Improved REST API permission callbacks with proper documentation
+
 = 1.0.3 =
 * Added direct file access protection to all PHP files
 * Fixed WordPress.org plugin check requirements
@@ -83,11 +88,30 @@ You can use:
 
 == Upgrade Notice ==
 
+= 1.0.4 =
+PHP syntax fixes and WordPress.org review compliance improvements.
+
 = 1.0.3 =
 WordPress.org plugin check compliance improvements.
 
 = 1.0.2 =
 Security improvements and i18n support added.
+
+== Development ==
+
+This plugin uses modern JavaScript (React/TypeScript) for the frontend. The source code is publicly available on GitHub.
+
+= Source Code =
+
+GitHub Repository: [https://github.com/moremorefun/wppay](https://github.com/moremorefun/wppay)
+
+The `dist/assets/` directory contains compiled JavaScript files. The original source files are in the `src/` directory of the repository.
+
+= Build Instructions =
+
+1. Clone the repository
+2. Install dependencies: `pnpm install`
+3. Build for production: `pnpm build`
 
 == Privacy Policy ==
 

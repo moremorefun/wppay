@@ -5,14 +5,14 @@
  * @package ViteForWp
  */
 
+declare( strict_types=1 );
+
+namespace Kucrut\Vite;
+
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
-
-declare( strict_types=1 );
-
-namespace Kucrut\Vite;
 
 use Exception;
 use WP_HTML_Tag_Processor;
@@ -34,12 +34,12 @@ const VITE_CLIENT_SCRIPT_HANDLE = 'vite-client';
 function get_manifest( string $manifest_dir ): object {
 	$dev_manifest = 'vite-dev-server';
 	// Avoid repeatedly opening & decoding the same file.
-	static $manifests = [];
+	static $manifests = array();
 
-	$file_names = [ $dev_manifest, 'manifest' ];
+	$file_names = array( $dev_manifest, 'manifest' );
 
 	foreach ( $file_names as $file_name ) {
-		$is_dev = $file_name === $dev_manifest;
+		$is_dev        = $file_name === $dev_manifest;
 		$manifest_path = "{$manifest_dir}/{$file_name}.json";
 
 		if ( isset( $manifests[ $manifest_path ] ) ) {
@@ -73,11 +73,11 @@ function get_manifest( string $manifest_dir ): object {
 	 */
 	$manifest = apply_filters( 'vite_for_wp__manifest_data', $manifest, $manifest_dir, $manifest_path );
 
-	$manifests[ $manifest_path ] = (object) [
-		'data' => $manifest,
-		'dir' => $manifest_dir,
+	$manifests[ $manifest_path ] = (object) array(
+		'data'   => $manifest,
+		'dir'    => $manifest_dir,
 		'is_dev' => $is_dev,
-	];
+	);
 
 	return $manifests[ $manifest_path ];
 }
@@ -166,7 +166,7 @@ function register_vite_client_script( object $manifest ): void {
 	$src = generate_development_asset_src( $manifest, '@vite/client' );
 
 	// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
-	wp_register_script( VITE_CLIENT_SCRIPT_HANDLE, $src, [], null, false );
+	wp_register_script( VITE_CLIENT_SCRIPT_HANDLE, $src, array(), null, false );
 	filter_script_tag( VITE_CLIENT_SCRIPT_HANDLE );
 }
 
@@ -190,8 +190,8 @@ function inject_react_refresh_preamble_script( object $manifest ): void {
 	}
 
 	$react_refresh_script_src = generate_development_asset_src( $manifest, '@react-refresh' );
-	$script_position = 'after';
-	$script = 'import RefreshRuntime from "' . $react_refresh_script_src . '";' . "\n"
+	$script_position          = 'after';
+	$script                   = 'import RefreshRuntime from "' . $react_refresh_script_src . '";' . "\n"
 		. 'RefreshRuntime.injectIntoGlobalHook(window);' . "\n"
 		. 'window.$RefreshReg$ = () => {};' . "\n"
 		. 'window.$RefreshSig$ = () => (type) => type;' . "\n"
@@ -201,7 +201,7 @@ function inject_react_refresh_preamble_script( object $manifest ): void {
 	add_filter(
 		'wp_inline_script_attributes',
 		function ( array $attributes ) use ( $script_position ): array {
-			if ( isset( $attributes['id'] ) && $attributes['id'] === VITE_CLIENT_SCRIPT_HANDLE . "-js-{$script_position}" ) {
+			if ( isset( $attributes['id'] ) && VITE_CLIENT_SCRIPT_HANDLE . "-js-{$script_position}" === $attributes['id'] ) {
 				$attributes['type'] = 'module';
 			}
 
@@ -228,7 +228,7 @@ function load_development_asset( object $manifest, string $entry, array $options
 	inject_react_refresh_preamble_script( $manifest );
 
 	$dependencies = array_merge(
-		[ VITE_CLIENT_SCRIPT_HANDLE ],
+		array( VITE_CLIENT_SCRIPT_HANDLE ),
 		$options['dependencies']
 	);
 
@@ -242,10 +242,10 @@ function load_development_asset( object $manifest, string $entry, array $options
 		return null;
 	}
 
-	$assets = [
-		'scripts' => [ $options['handle'] ],
-		'styles' => $options['css-dependencies'],
-	];
+	$assets = array(
+		'scripts' => array( $options['handle'] ),
+		'styles'  => $options['css-dependencies'],
+	);
 
 	/**
 	 * Filter registered development assets
@@ -282,12 +282,12 @@ function load_production_asset( object $manifest, string $entry, array $options 
 		return null;
 	}
 
-	$assets = [
-		'scripts' => [],
-		'styles' => [],
-	];
-	$item = $manifest->data->{$entry};
-	$src = "{$url}/{$item->file}";
+	$assets = array(
+		'scripts' => array(),
+		'styles'  => array(),
+	);
+	$item   = $manifest->data->{$entry};
+	$src    = "{$url}/{$item->file}";
 
 	if ( ! $options['css-only'] ) {
 		filter_script_tag( $options['handle'] );
@@ -367,14 +367,14 @@ function register_stylesheets( array &$assets, array $stylesheets, string $url, 
  * @return array Array of options merged with defaults.
  */
 function parse_options( array $options ): array {
-	$defaults = [
-		'css-dependencies' => [],
-		'css-media' => 'all',
-		'css-only' => false,
-		'dependencies' => [],
-		'handle' => '',
-		'in-footer' => false,
-	];
+	$defaults = array(
+		'css-dependencies' => array(),
+		'css-media'        => 'all',
+		'css-only'         => false,
+		'dependencies'     => array(),
+		'handle'           => '',
+		'in-footer'        => false,
+	);
 
 	return wp_parse_args( $options, $defaults );
 }
@@ -391,12 +391,12 @@ function parse_options( array $options ): array {
  * @return string
  */
 function prepare_asset_url( string $dir ) {
-	$content_dir = wp_normalize_path( WP_CONTENT_DIR );
-	$manifest_dir = wp_normalize_path( $dir );
-	$url = content_url( str_replace( $content_dir, '', $manifest_dir ) );
+	$content_dir         = wp_normalize_path( WP_CONTENT_DIR );
+	$manifest_dir        = wp_normalize_path( $dir );
+	$url                 = content_url( str_replace( $content_dir, '', $manifest_dir ) );
 	$url_matches_pattern = preg_match( '/(?<address>http(?:s?):\/\/.*\/)(?<fullPath>wp-content(?<removablePath>\/.*)\/(?:plugins|themes)\/.*)/', $url, $url_parts );
 
-	if ( $url_matches_pattern === 0 ) {
+	if ( 0 === $url_matches_pattern ) {
 		return $url;
 	}
 
@@ -431,7 +431,7 @@ function register_asset( string $manifest_dir, string $entry, array $options ): 
 	}
 
 	$options = parse_options( $options );
-	$assets = $manifest->is_dev
+	$assets  = $manifest->is_dev
 		? load_development_asset( $manifest, $entry, $options )
 		: load_production_asset( $manifest, $entry, $options );
 
@@ -458,10 +458,10 @@ function enqueue_asset( string $manifest_dir, string $entry, array $options ): b
 		return false;
 	}
 
-	$map = [
+	$map = array(
 		'scripts' => 'wp_enqueue_script',
-		'styles' => 'wp_enqueue_style',
-	];
+		'styles'  => 'wp_enqueue_style',
+	);
 
 	foreach ( $assets as $group => $handles ) {
 		$func = $map[ $group ];

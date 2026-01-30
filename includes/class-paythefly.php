@@ -5,12 +5,12 @@
  * @package PayTheFly
  */
 
+namespace PayTheFly;
+
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
-
-namespace PayTheFly;
 
 /**
  * Main PayTheFly plugin class.
@@ -52,10 +52,10 @@ class PayTheFly {
 		require_once PAYTHEFLY_DIR . 'includes/public/class-frontend.php';
 		require_once PAYTHEFLY_DIR . 'includes/public/class-shortcode.php';
 		require_once PAYTHEFLY_DIR . 'includes/public/class-block.php';
-		require_once PAYTHEFLY_DIR . 'includes/public/class-content-filter.php';
+		require_once PAYTHEFLY_DIR . 'includes/public/class-contentfilter.php';
 
 		// API classes.
-		require_once PAYTHEFLY_DIR . 'includes/api/class-rest-api.php';
+		require_once PAYTHEFLY_DIR . 'includes/api/class-restapi.php';
 
 		// Database classes.
 		require_once PAYTHEFLY_DIR . 'includes/database/class-database.php';
@@ -112,8 +112,8 @@ class PayTheFly {
 	private function define_admin_hooks(): void {
 		$this->admin = new Admin\Admin();
 
-		add_action( 'admin_menu', [ $this->admin, 'add_admin_menu' ] );
-		add_action( 'admin_enqueue_scripts', [ $this->admin, 'enqueue_scripts' ] );
+		add_action( 'admin_menu', array( $this->admin, 'add_admin_menu' ) );
+		add_action( 'admin_enqueue_scripts', array( $this->admin, 'enqueue_scripts' ) );
 	}
 
 	/**
@@ -124,10 +124,10 @@ class PayTheFly {
 	private function define_public_hooks(): void {
 		$this->frontend = new Frontend\Frontend();
 
-		add_action( 'wp_enqueue_scripts', [ $this->frontend, 'enqueue_scripts' ] );
-		add_action( 'init', [ $this->frontend, 'register_shortcodes' ] );
-		add_action( 'init', [ $this->frontend, 'register_blocks' ] );
-		add_action( 'init', [ $this->frontend, 'register_content_filter' ] );
+		add_action( 'wp_enqueue_scripts', array( $this->frontend, 'enqueue_scripts' ) );
+		add_action( 'init', array( $this->frontend, 'register_shortcodes' ) );
+		add_action( 'init', array( $this->frontend, 'register_blocks' ) );
+		add_action( 'init', array( $this->frontend, 'register_content_filter' ) );
 	}
 
 	/**
@@ -138,6 +138,6 @@ class PayTheFly {
 	private function define_api_hooks(): void {
 		$rest_api = new Api\RestApi();
 
-		add_action( 'rest_api_init', [ $rest_api, 'register_routes' ] );
+		add_action( 'rest_api_init', array( $rest_api, 'register_routes' ) );
 	}
 }

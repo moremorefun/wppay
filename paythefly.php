@@ -3,7 +3,7 @@
  * Plugin Name:       PayTheFly Crypto Gateway
  * Plugin URI:        https://paythefly.com/wordpress-plugin
  * Description:       Integrate PayTheFly cryptocurrency payment services into your WordPress site.
- * Version:           1.0.3
+ * Version:           1.0.4
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            PayTheFly Team
@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Plugin version.
  */
-define( 'PAYTHEFLY_VERSION', '1.0.3' );
+define( 'PAYTHEFLY_VERSION', '1.0.4' );
 
 /**
  * Plugin file path.

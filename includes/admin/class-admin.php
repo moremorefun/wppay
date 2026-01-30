@@ -39,7 +39,7 @@ class Admin {
 			__( 'PayTheFly', 'paythefly-crypto-gateway' ),
 			'manage_options',
 			'paythefly',
-			[ $this->settings, 'render_settings_page' ],
+			array( $this->settings, 'render_settings_page' ),
 			'dashicons-money-alt',
 			30
 		);
@@ -60,12 +60,12 @@ class Admin {
 		Vite\enqueue_asset(
 			PAYTHEFLY_DIR . 'dist',
 			'src/admin/index.tsx',
-			[
+			array(
 				'handle'           => 'paythefly-admin',
-				'dependencies'     => [ 'react', 'react-dom', 'wp-api-fetch', 'wp-i18n' ],
-				'css-dependencies' => [ 'wp-components' ],
+				'dependencies'     => array( 'react', 'react-dom', 'wp-api-fetch', 'wp-i18n' ),
+				'css-dependencies' => array( 'wp-components' ),
 				'in-footer'        => true,
-			]
+			)
 		);
 
 		wp_set_script_translations(
@@ -77,11 +77,11 @@ class Admin {
 		wp_localize_script(
 			'paythefly-admin',
 			'paytheflyAdmin',
-			[
+			array(
 				'apiUrl'  => rest_url( 'paythefly/v1' ),
 				'nonce'   => wp_create_nonce( 'wp_rest' ),
 				'version' => PAYTHEFLY_VERSION,
-			]
+			)
 		);
 	}
 }

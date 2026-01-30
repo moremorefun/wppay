@@ -13,18 +13,23 @@ namespace PayTheFly\Database;
 class Database {
 
 	/**
-	 * Table name for payments.
-	 *
-	 * @var string
+	 * Table name for payments (without prefix).
 	 */
-	private string $table_name;
+	const TABLE_NAME = 'paythefly_payments';
 
 	/**
-	 * Constructor.
+	 * Cache group for payment data.
 	 */
-	public function __construct() {
+	const CACHE_GROUP = 'paythefly';
+
+	/**
+	 * Get the full table name with prefix.
+	 *
+	 * @return string
+	 */
+	private function get_table_name(): string {
 		global $wpdb;
-		$this->table_name = $wpdb->prefix . 'paythefly_payments';
+		return $wpdb->prefix . self::TABLE_NAME;
 	}
 
 	/**
@@ -35,9 +40,10 @@ class Database {
 	public function create_tables(): void {
 		global $wpdb;
 
+		$table_name      = $this->get_table_name();
 		$charset_collate = $wpdb->get_charset_collate();
 
-		$sql = "CREATE TABLE {$this->table_name} (
+		$sql = "CREATE TABLE {$table_name} (
 			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 			payment_id varchar(64) NOT NULL,
 			amount decimal(18,8) NOT NULL,
@@ -66,21 +72,25 @@ class Database {
 	public function insert_payment( array $data ) {
 		global $wpdb;
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Custom table for plugin data
 		$result = $wpdb->insert(
-			$this->table_name,
-			[
+			$this->get_table_name(),
+			array(
 				'payment_id'  => $data['payment_id'],
 				'amount'      => $data['amount'],
 				'currency'    => $data['currency'],
-				'status'      => $data['status'] ?? 'pending',
-				'description' => $data['description'] ?? '',
+				'status'      => isset( $data['status'] ) ? $data['status'] : 'pending',
+				'description' => isset( $data['description'] ) ? $data['description'] : '',
 				'metadata'    => isset( $data['metadata'] ) ? wp_json_encode( $data['metadata'] ) : null,
-			],
-			[ '%s', '%s', '%s', '%s', '%s', '%s' ]
+			),
+			array( '%s', '%s', '%s', '%s', '%s', '%s' )
 		);
 
-		return $result ? $wpdb->insert_id : false;
+		if ( $result ) {
+			wp_cache_delete( 'payments_list', self::CACHE_GROUP );
+			return $wpdb->insert_id;
+		}
+
+		return false;
 	}
 
 	/**
@@ -93,16 +103,20 @@ class Database {
 	public function update_status( string $payment_id, string $status ): bool {
 		global $wpdb;
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table, real-time data
 		$result = $wpdb->update(
-			$this->table_name,
-			[ 'status' => $status ],
-			[ 'payment_id' => $payment_id ],
-			[ '%s' ],
-			[ '%s' ]
+			$this->get_table_name(),
+			array( 'status' => $status ),
+			array( 'payment_id' => $payment_id ),
+			array( '%s' ),
+			array( '%s' )
 		);
 
-		return $result !== false;
+		if ( false !== $result ) {
+			wp_cache_delete( 'payment_' . $payment_id, self::CACHE_GROUP );
+			wp_cache_delete( 'payments_list', self::CACHE_GROUP );
+		}
+
+		return false !== $result;
 	}
 
 	/**
@@ -114,16 +128,24 @@ class Database {
 	public function get_payment( string $payment_id ): ?object {
 		global $wpdb;
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table, real-time payment data
+		$cache_key = 'payment_' . $payment_id;
+		$payment   = wp_cache_get( $cache_key, self::CACHE_GROUP );
+
+		if ( false !== $payment ) {
+			return $payment ? $payment : null;
+		}
+
 		$payment = $wpdb->get_row(
-			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table_name is safe
 			$wpdb->prepare(
-				"SELECT * FROM {$this->table_name} WHERE payment_id = %s",
+				'SELECT * FROM %i WHERE payment_id = %s',
+				$this->get_table_name(),
 				$payment_id
 			)
 		);
 
-		return $payment ?: null;
+		wp_cache_set( $cache_key, $payment ? $payment : '', self::CACHE_GROUP, HOUR_IN_SECONDS );
+
+		return $payment ? $payment : null;
 	}
 
 	/**
@@ -137,47 +159,58 @@ class Database {
 	public function get_payments( int $page = 1, int $per_page = 20, string $status = '' ): array {
 		global $wpdb;
 
-		$offset = ( $page - 1 ) * $per_page;
+		$table_name = $this->get_table_name();
+		$offset     = ( $page - 1 ) * $per_page;
+		$cache_key  = 'payments_list_' . md5( $page . '_' . $per_page . '_' . $status );
+		$cached     = wp_cache_get( $cache_key, self::CACHE_GROUP );
+
+		if ( false !== $cached ) {
+			return $cached;
+		}
 
 		if ( ! empty( $status ) ) {
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table, real-time data
-			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table_name is safe
 			$items = $wpdb->get_results(
 				$wpdb->prepare(
-					"SELECT * FROM {$this->table_name} WHERE status = %s ORDER BY created_at DESC LIMIT %d OFFSET %d",
+					'SELECT * FROM %i WHERE status = %s ORDER BY created_at DESC LIMIT %d OFFSET %d',
+					$table_name,
 					$status,
 					$per_page,
 					$offset
 				)
 			);
 
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table, real-time data
-			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table_name is safe
 			$total = $wpdb->get_var(
 				$wpdb->prepare(
-					"SELECT COUNT(*) FROM {$this->table_name} WHERE status = %s",
+					'SELECT COUNT(*) FROM %i WHERE status = %s',
+					$table_name,
 					$status
 				)
 			);
 		} else {
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table, real-time data
-			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table_name is safe
 			$items = $wpdb->get_results(
 				$wpdb->prepare(
-					"SELECT * FROM {$this->table_name} ORDER BY created_at DESC LIMIT %d OFFSET %d",
+					'SELECT * FROM %i ORDER BY created_at DESC LIMIT %d OFFSET %d',
+					$table_name,
 					$per_page,
 					$offset
 				)
 			);
 
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table, real-time data
-			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table_name is safe
-			$total = $wpdb->get_var( "SELECT COUNT(*) FROM {$this->table_name}" );
+			$total = $wpdb->get_var(
+				$wpdb->prepare(
+					'SELECT COUNT(*) FROM %i',
+					$table_name
+				)
+			);
 		}
 
-		return [
-			'items' => $items ?: [],
+		$result = array(
+			'items' => $items ? $items : array(),
 			'total' => (int) $total,
-		];
+		);
+
+		wp_cache_set( $cache_key, $result, self::CACHE_GROUP, 5 * MINUTE_IN_SECONDS );
+
+		return $result;
 	}
 }

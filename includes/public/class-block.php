@@ -28,10 +28,10 @@ class Block {
 		if ( file_exists( $asset_file ) ) {
 			$asset = require $asset_file;
 		} else {
-			$asset = [
-				'dependencies' => [ 'wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n' ],
+			$asset = array(
+				'dependencies' => array( 'wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n' ),
 				'version'      => PAYTHEFLY_VERSION,
-			];
+			);
 		}
 
 		wp_register_script(
@@ -45,31 +45,31 @@ class Block {
 		wp_register_style(
 			'paythefly-block-editor',
 			PAYTHEFLY_URL . 'dist/block.css',
-			[ 'wp-edit-blocks' ],
+			array( 'wp-edit-blocks' ),
 			$asset['version']
 		);
 
 		register_block_type(
 			'paythefly/payment-widget',
-			[
+			array(
 				'editor_script'   => 'paythefly-block-editor',
 				'editor_style'    => 'paythefly-block-editor',
-				'render_callback' => [ $this, 'render_block' ],
-				'attributes'      => [
-					'amount'      => [
+				'render_callback' => array( $this, 'render_block' ),
+				'attributes'      => array(
+					'amount'      => array(
 						'type'    => 'string',
 						'default' => '',
-					],
-					'currency'    => [
+					),
+					'currency'    => array(
 						'type'    => 'string',
 						'default' => 'USDT',
-					],
-					'description' => [
+					),
+					'description' => array(
 						'type'    => 'string',
 						'default' => '',
-					],
-				],
-			]
+					),
+				),
+			)
 		);
 	}
 

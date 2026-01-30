@@ -5,12 +5,12 @@
  * @package PayTheFly
  */
 
+namespace PayTheFly\Admin;
+
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
-
-namespace PayTheFly\Admin;
 
 /**
  * Handles plugin settings.
@@ -26,7 +26,7 @@ class Settings {
 	 * Constructor.
 	 */
 	public function __construct() {
-		add_action( 'admin_init', [ $this, 'register_settings' ] );
+		add_action( 'admin_init', array( $this, 'register_settings' ) );
 	}
 
 	/**
@@ -38,11 +38,11 @@ class Settings {
 		register_setting(
 			'paythefly_settings_group',
 			self::OPTION_NAME,
-			[
+			array(
 				'type'              => 'object',
-				'sanitize_callback' => [ $this, 'sanitize_settings' ],
+				'sanitize_callback' => array( $this, 'sanitize_settings' ),
 				'default'           => $this->get_defaults(),
-			]
+			)
 		);
 	}
 
@@ -52,14 +52,14 @@ class Settings {
 	 * @return array<string, mixed>
 	 */
 	public function get_defaults(): array {
-		return [
+		return array(
 			'project_id'         => '',
 			'project_key'        => '',
 			'brand'              => '',
 			'webhook_url'        => '',
 			'fab_enabled'        => true,
 			'inline_button_auto' => false,
-		];
+		);
 	}
 
 	/**
@@ -69,7 +69,7 @@ class Settings {
 	 * @return array<string, mixed>
 	 */
 	public function sanitize_settings( $input ): array {
-		$sanitized = [];
+		$sanitized = array();
 
 		if ( isset( $input['project_id'] ) ) {
 			$sanitized['project_id'] = sanitize_text_field( $input['project_id'] );
@@ -102,13 +102,13 @@ class Settings {
 	 * Get a specific setting value.
 	 *
 	 * @param string $key     Setting key.
-	 * @param mixed  $default Default value if setting doesn't exist.
+	 * @param mixed  $default_value Default value if setting doesn't exist.
 	 * @return mixed
 	 */
-	public function get( string $key, $default = null ) {
+	public function get( string $key, $default_value = null ) {
 		$settings = get_option( self::OPTION_NAME, $this->get_defaults() );
 
-		return $settings[ $key ] ?? $default;
+		return $settings[ $key ] ?? $default_value;
 	}
 
 	/**
