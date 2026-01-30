@@ -66,6 +66,7 @@ class Database {
 	public function insert_payment( array $data ) {
 		global $wpdb;
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Custom table for plugin data
 		$result = $wpdb->insert(
 			$this->table_name,
 			[
@@ -92,6 +93,7 @@ class Database {
 	public function update_status( string $payment_id, string $status ): bool {
 		global $wpdb;
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table, real-time data
 		$result = $wpdb->update(
 			$this->table_name,
 			[ 'status' => $status ],
@@ -112,7 +114,9 @@ class Database {
 	public function get_payment( string $payment_id ): ?object {
 		global $wpdb;
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table, real-time payment data
 		$payment = $wpdb->get_row(
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table_name is safe
 			$wpdb->prepare(
 				"SELECT * FROM {$this->table_name} WHERE payment_id = %s",
 				$payment_id
@@ -136,6 +140,7 @@ class Database {
 		$offset = ( $page - 1 ) * $per_page;
 
 		if ( ! empty( $status ) ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table, real-time data
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table_name is safe
 			$items = $wpdb->get_results(
 				$wpdb->prepare(
@@ -146,6 +151,7 @@ class Database {
 				)
 			);
 
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table, real-time data
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table_name is safe
 			$total = $wpdb->get_var(
 				$wpdb->prepare(
@@ -154,6 +160,7 @@ class Database {
 				)
 			);
 		} else {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table, real-time data
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table_name is safe
 			$items = $wpdb->get_results(
 				$wpdb->prepare(
@@ -163,6 +170,7 @@ class Database {
 				)
 			);
 
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table, real-time data
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table_name is safe
 			$total = $wpdb->get_var( "SELECT COUNT(*) FROM {$this->table_name}" );
 		}

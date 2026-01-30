@@ -4,7 +4,7 @@ Donate link: https://paythefly.com
 Tags: cryptocurrency, payment, crypto, bitcoin, ethereum
 Requires at least: 6.0
 Tested up to: 6.9
-Stable tag: 1.0.2
+Stable tag: 1.0.3
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -70,6 +70,10 @@ You can use:
 
 == Changelog ==
 
+= 1.0.3 =
+* Added direct file access protection to all PHP files
+* Fixed WordPress.org plugin check requirements
+
 = 1.0.2 =
 * Improved security for REST API and database queries
 * Added i18n support for JS translations
@@ -78,6 +82,9 @@ You can use:
 * Initial release
 
 == Upgrade Notice ==
+
+= 1.0.3 =
+WordPress.org plugin check compliance improvements.
 
 = 1.0.2 =
 Security improvements and i18n support added.

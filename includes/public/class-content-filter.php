@@ -5,6 +5,11 @@
  * @package PayTheFly
  */
 
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 namespace PayTheFly\Frontend;
 
 /**
