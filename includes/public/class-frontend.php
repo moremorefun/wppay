@@ -74,7 +74,6 @@ class Frontend {
 		return array(
 			'apiUrl'          => rest_url( 'paythefly/v1' ),
 			'nonce'           => wp_create_nonce( 'wp_rest' ),
-			'projectId'       => $settings['project_id'] ?? '',
 			'brand'           => $settings['brand'] ?? '',
 			'fabEnabled'      => $settings['fab_enabled'] ?? true,
 			'recipientName'   => $recipient_name,
@@ -115,7 +114,8 @@ class Frontend {
 
 		// Enqueue FAB if enabled.
 		$settings = get_option( 'paythefly_settings', array() );
-		if ( ! empty( $settings['fab_enabled'] ) && ! empty( $settings['project_id'] ) ) {
+		$has_chain_config = ! empty( $settings['tron']['project_id'] ) || ! empty( $settings['bsc']['project_id'] );
+		if ( ! empty( $settings['fab_enabled'] ) && $has_chain_config ) {
 			$this->enqueue_fab_scripts( $config );
 		}
 	}

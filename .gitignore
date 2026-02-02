@@ -9,8 +9,10 @@ build/
 
 # wp-env
 .wp-env/
+.wp-env.override.json
 uploads/
 debug.log
+mu-plugins/
 
 # IDE
 .idea/

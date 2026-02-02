@@ -10,6 +10,8 @@ namespace PayTheFly\Tests\Unit\Api;
 use WP_UnitTestCase;
 use WP_REST_Request;
 use PayTheFly\Api\RestApi;
+use PayTheFly\Crypto\Encryption;
+use PayTheFly\Crypto\PrivateKey;
 
 /**
  * Tests for the create_order endpoint.
@@ -24,6 +26,16 @@ class RestApiOrderTest extends WP_UnitTestCase {
 	private RestApi $api;
 
 	/**
+	 * Test private key (hex).
+	 *
+	 * This is Hardhat's default test account #0 private key.
+	 * It is publicly known and should NEVER be used in production.
+	 *
+	 * @var string
+	 */
+	private string $test_private_key = 'ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80';
+
+	/**
 	 * Set up test fixtures.
 	 *
 	 * @return void
@@ -32,13 +44,25 @@ class RestApiOrderTest extends WP_UnitTestCase {
 		parent::setUp();
 		$this->api = new RestApi();
 
-		// Set default settings with project_id.
+		// Set default settings with new structure.
+		$encrypted_key = Encryption::encrypt( $this->test_private_key );
 		update_option(
 			'paythefly_settings',
 			[
-				'project_id'  => 'test-project-123',
-				'project_key' => 'test-key-456',
-				'brand'       => 'Test Brand',
+				'private_key_encrypted' => $encrypted_key,
+				'evm_address'           => '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
+				'tron_address'          => 'TYAmMSxfNLAoifcLvuDxMpKTwQG3eUXwkw',
+				'tron'                  => [
+					'project_id'       => 'tron-project-123',
+					'project_key'      => 'tron-key-456',
+					'contract_address' => 'TContractAddress123456789012345678',
+				],
+				'bsc'                   => [
+					'project_id'       => 'bsc-project-789',
+					'project_key'      => 'bsc-key-012',
+					'contract_address' => '0x1234567890123456789012345678901234567890',
+				],
+				'brand'                 => 'Test Brand',
 			]
 		);
 	}
@@ -185,7 +209,16 @@ class RestApiOrderTest extends WP_UnitTestCase {
 	 * @return void
 	 */
 	public function test_fails_without_project_id(): void {
-		delete_option( 'paythefly_settings' );
+		update_option(
+			'paythefly_settings',
+			[
+				'private_key_encrypted' => Encryption::encrypt( $this->test_private_key ),
+				'tron'                  => [
+					// No project_id.
+					'contract_address' => 'TContractAddress123456789012345678',
+				],
+			]
+		);
 
 		$request  = $this->create_request(
 			[
@@ -201,11 +234,71 @@ class RestApiOrderTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test that correct token address is returned for TRON.
+	 * Test that request fails without contract address configured.
 	 *
 	 * @return void
 	 */
-	public function test_returns_correct_tron_token(): void {
+	public function test_fails_without_contract_address(): void {
+		update_option(
+			'paythefly_settings',
+			[
+				'private_key_encrypted' => Encryption::encrypt( $this->test_private_key ),
+				'tron'                  => [
+					'project_id' => 'tron-project-123',
+					// No contract_address.
+				],
+			]
+		);
+
+		$request  = $this->create_request(
+			[
+				'amount'  => '100',
+				'chainId' => 728126428,
+			]
+		);
+		$response = $this->api->create_order( $request );
+
+		$this->assertInstanceOf( \WP_Error::class, $response );
+		$this->assertEquals( 'missing_contract_address', $response->get_error_code() );
+		$this->assertEquals( 500, $response->get_error_data()['status'] );
+	}
+
+	/**
+	 * Test that request fails without private key configured.
+	 *
+	 * @return void
+	 */
+	public function test_fails_without_private_key(): void {
+		update_option(
+			'paythefly_settings',
+			[
+				// No private_key_encrypted.
+				'tron' => [
+					'project_id'       => 'tron-project-123',
+					'contract_address' => 'TContractAddress123456789012345678',
+				],
+			]
+		);
+
+		$request  = $this->create_request(
+			[
+				'amount'  => '100',
+				'chainId' => 728126428,
+			]
+		);
+		$response = $this->api->create_order( $request );
+
+		$this->assertInstanceOf( \WP_Error::class, $response );
+		$this->assertEquals( 'missing_private_key', $response->get_error_code() );
+		$this->assertEquals( 500, $response->get_error_data()['status'] );
+	}
+
+	/**
+	 * Test that response includes payUrl.
+	 *
+	 * @return void
+	 */
+	public function test_response_includes_pay_url(): void {
 		$request  = $this->create_request(
 			[
 				'amount'  => '100',
@@ -215,25 +308,27 @@ class RestApiOrderTest extends WP_UnitTestCase {
 		$response = $this->api->create_order( $request );
 		$data     = $response->get_data();
 
-		$this->assertEquals( 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t', $data['token'] );
+		$this->assertArrayHasKey( 'payUrl', $data );
+		$this->assertStringStartsWith( 'https://pro.paythefly.com/pay', $data['payUrl'] );
 	}
 
 	/**
-	 * Test that correct token address is returned for BSC.
+	 * Test that payUrl includes signature.
 	 *
 	 * @return void
 	 */
-	public function test_returns_correct_bsc_token(): void {
+	public function test_pay_url_includes_signature(): void {
 		$request  = $this->create_request(
 			[
 				'amount'  => '100',
-				'chainId' => 56,
+				'chainId' => 728126428,
 			]
 		);
 		$response = $this->api->create_order( $request );
 		$data     = $response->get_data();
 
-		$this->assertEquals( '0x55d398326f99059fF775485246999027B3197955', $data['token'] );
+		$this->assertStringContainsString( 'signature=0x', $data['payUrl'] );
+		$this->assertStringContainsString( 'deadline=', $data['payUrl'] );
 	}
 
 	/**
@@ -251,6 +346,7 @@ class RestApiOrderTest extends WP_UnitTestCase {
 		$response = $this->api->create_order( $request );
 		$data     = $response->get_data();
 
+		$this->assertArrayHasKey( 'serialNo', $data );
 		$this->assertStringStartsWith( 'PTF-', $data['serialNo'] );
 		$this->assertMatchesRegularExpression(
 			'/^PTF-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i',

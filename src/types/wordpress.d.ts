@@ -92,7 +92,6 @@ interface Window {
   paytheflyFrontend?: {
     apiUrl: string;
     nonce: string;
-    projectId: string;
     brand: string;
     fabEnabled: boolean;
     recipientName: string;

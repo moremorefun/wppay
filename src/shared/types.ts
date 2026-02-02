@@ -6,7 +6,6 @@ import type { NetworkKey } from './constants';
 export interface PayTheFlyConfig {
   apiUrl: string;
   nonce: string;
-  projectId: string;
   brand: string;
   fabEnabled: boolean;
   recipientName: string;
@@ -17,11 +16,8 @@ export interface PayTheFlyConfig {
  * Order creation response from API.
  */
 export interface CreateOrderResponse {
+  payUrl: string;
   serialNo: string;
-  projectId: string;
-  brand: string;
-  token: string;
-  redirect: string;
 }
 
 /**

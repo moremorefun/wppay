@@ -165,3 +165,198 @@
     transform: rotate(360deg);
   }
 }
+
+/* Notices */
+.paythefly-notice {
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.paythefly-notice--success {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.paythefly-notice--error {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+/* Badges */
+.paythefly-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.paythefly-badge--success {
+  background: #d4edda;
+  color: #155724;
+}
+
+.paythefly-badge--warning {
+  background: #fff3cd;
+  color: #856404;
+}
+
+/* Address display */
+.paythefly-settings__address {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.paythefly-settings__address code {
+  flex: 1;
+  padding: 8px 12px;
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 13px;
+  overflow: auto;
+}
+
+.paythefly-settings__address input[type="text"] {
+  flex: 1;
+}
+
+/* Key status */
+.paythefly-settings__key-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Button variants */
+.paythefly-button--secondary {
+  background: #f0f0f0;
+  color: #333;
+  border: 1px solid #ddd;
+}
+
+.paythefly-button--secondary:hover {
+  background: #e0e0e0;
+}
+
+.paythefly-button--small {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+/* Tabs */
+.paythefly-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #ddd;
+}
+
+.paythefly-tabs__tab {
+  padding: 10px 20px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+  transition: all 0.2s;
+}
+
+.paythefly-tabs__tab:hover {
+  color: #0073aa;
+}
+
+.paythefly-tabs__tab--active {
+  color: #0073aa;
+  border-bottom-color: #0073aa;
+}
+
+.paythefly-tabs__status {
+  margin-left: 6px;
+  font-size: 12px;
+}
+
+.paythefly-tabs__status--ok {
+  color: #28a745;
+}
+
+.paythefly-tabs__status--pending {
+  color: #999;
+}
+
+.paythefly-tabs__content {
+  padding: 16px 0;
+}
+
+/* Info box */
+.paythefly-settings__info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: #f0f8ff;
+  border: 1px solid #cce5ff;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.paythefly-settings__info code {
+  padding: 4px 8px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 12px;
+}
+
+/* Intro text */
+.paythefly-settings__intro {
+  margin: 0 0 16px;
+  color: #666;
+  font-size: 14px;
+}
+
+.paythefly-settings__intro a {
+  color: #0073aa;
+  text-decoration: none;
+}
+
+.paythefly-settings__intro a:hover {
+  text-decoration: underline;
+}
+
+/* Chain Status Grid */
+.paythefly-settings__status-grid {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.paythefly-settings__status-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.paythefly-settings__status-item--ok {
+  background: #f0fff4;
+  border-color: #c3e6cb;
+}
+
+.paythefly-settings__status-label {
+  font-weight: 600;
+  font-size: 14px;
+  min-width: 50px;
+}

@@ -69,7 +69,12 @@ require_once PAYTHEFLY_DIR . 'includes/class-paythefly.php';
  * @return void
  */
 function paythefly_activate(): void {
-	// Activation tasks.
+	// Create database tables.
+	require_once PAYTHEFLY_DIR . 'includes/database/class-database.php';
+	$db = new PayTheFly\Database\Database();
+	$db->create_tables();
+
+	// Flush rewrite rules.
 	flush_rewrite_rules();
 }
 register_activation_hook( __FILE__, 'paythefly_activate' );

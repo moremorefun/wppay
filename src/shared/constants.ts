@@ -17,9 +17,9 @@ export const NETWORKS = {
 export type NetworkKey = keyof typeof NETWORKS;
 
 /**
- * PayTheFly payment base URL.
+ * PayTheFly Pro payment base URL.
  */
-export const PAYTHEFLY_PAY_URL = 'https://paythefly.com/pay';
+export const PAYTHEFLY_PAY_URL = 'https://pro.paythefly.com/pay';
 
 /**
  * Default currency.

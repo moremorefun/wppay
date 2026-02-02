@@ -59,6 +59,9 @@ class PayTheFly {
 
 		// Database classes.
 		require_once PAYTHEFLY_DIR . 'includes/database/class-database.php';
+
+		// Webhook classes.
+		require_once PAYTHEFLY_DIR . 'includes/webhook/class-webhookhandler.php';
 	}
 
 	/**
@@ -71,6 +74,7 @@ class PayTheFly {
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
 		$this->define_api_hooks();
+		$this->define_webhook_hooks();
 	}
 
 	/**
@@ -139,5 +143,15 @@ class PayTheFly {
 		$rest_api = new Api\RestApi();
 
 		add_action( 'rest_api_init', array( $rest_api, 'register_routes' ) );
+	}
+
+	/**
+	 * Register webhook handlers.
+	 *
+	 * @return void
+	 */
+	private function define_webhook_hooks(): void {
+		$webhook_handler = new Webhook\WebhookHandler();
+		$webhook_handler->register();
 	}
 }

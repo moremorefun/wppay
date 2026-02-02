@@ -38,6 +38,13 @@ class RestApiWebhookTest extends WP_UnitTestCase {
 	private string $project_id = 'test-project-456';
 
 	/**
+	 * BSC chain ID.
+	 *
+	 * @var int
+	 */
+	private int $chain_id = 56;
+
+	/**
 	 * Set up test fixtures.
 	 *
 	 * @return void
@@ -46,12 +53,18 @@ class RestApiWebhookTest extends WP_UnitTestCase {
 		parent::setUp();
 		$this->api = new RestApi();
 
-		// Set default settings.
+		// Set default settings with new structure.
 		update_option(
 			'paythefly_settings',
 			[
-				'project_id'  => $this->project_id,
-				'project_key' => $this->project_key,
+				'bsc' => [
+					'project_id'  => $this->project_id,
+					'project_key' => $this->project_key,
+				],
+				'tron' => [
+					'project_id'  => 'tron-project-789',
+					'project_key' => 'tron-secret-key-456',
+				],
 			]
 		);
 	}
@@ -82,13 +95,25 @@ class RestApiWebhookTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Generate valid signature for data.
+	 * Generate valid signature for data (legacy MD5).
 	 *
 	 * @param string $data JSON data string.
 	 * @return string
 	 */
 	private function generate_signature( string $data ): string {
 		return strtoupper( md5( $data . $this->project_key ) );
+	}
+
+	/**
+	 * Generate HMAC-SHA256 signature.
+	 *
+	 * @param string $data      JSON data string.
+	 * @param int    $timestamp Unix timestamp.
+	 * @return string
+	 */
+	private function generate_hmac_signature( string $data, int $timestamp ): string {
+		$message = $data . '.' . $timestamp;
+		return hash_hmac( 'sha256', $message, $this->project_key );
 	}
 
 	/**
@@ -128,12 +153,17 @@ class RestApiWebhookTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test that invalid signature is rejected.
+	 * Test that invalid signature is rejected (legacy MD5).
 	 *
 	 * @return void
 	 */
 	public function test_rejects_invalid_signature(): void {
-		$data     = wp_json_encode( [ 'project_id' => $this->project_id ] );
+		$data     = wp_json_encode(
+			[
+				'project_id' => $this->project_id,
+				'chain_id'   => $this->chain_id,
+			]
+		);
 		$request  = $this->create_request(
 			[
 				'data' => $data,
@@ -174,7 +204,12 @@ class RestApiWebhookTest extends WP_UnitTestCase {
 	 * @return void
 	 */
 	public function test_rejects_project_mismatch(): void {
-		$data     = wp_json_encode( [ 'project_id' => 'wrong-project-id' ] );
+		$data     = wp_json_encode(
+			[
+				'project_id' => 'wrong-project-id',
+				'chain_id'   => $this->chain_id,
+			]
+		);
 		$sign     = $this->generate_signature( $data );
 		$request  = $this->create_request(
 			[
@@ -190,7 +225,7 @@ class RestApiWebhookTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test that valid signature is accepted.
+	 * Test that valid signature is accepted (legacy MD5).
 	 *
 	 * @return void
 	 */
@@ -198,6 +233,7 @@ class RestApiWebhookTest extends WP_UnitTestCase {
 		$data     = wp_json_encode(
 			[
 				'project_id' => $this->project_id,
+				'chain_id'   => $this->chain_id,
 				'order_id'   => 'test-order-123',
 				'amount'     => '100.00',
 				'status'     => 'completed',
@@ -218,12 +254,71 @@ class RestApiWebhookTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test that HMAC-SHA256 signature is accepted.
+	 *
+	 * @return void
+	 */
+	public function test_accepts_hmac_signature(): void {
+		$timestamp = time();
+		$data      = wp_json_encode(
+			[
+				'project_id' => $this->project_id,
+				'chain_id'   => $this->chain_id,
+				'order_id'   => 'test-order-hmac',
+				'amount'     => '50.00',
+				'status'     => 'completed',
+			]
+		);
+		$sign      = $this->generate_hmac_signature( $data, $timestamp );
+		$request   = $this->create_request(
+			[
+				'data'      => $data,
+				'sign'      => $sign,
+				'timestamp' => $timestamp,
+			]
+		);
+		$response  = $this->api->handle_webhook( $request );
+
+		$this->assertInstanceOf( \WP_REST_Response::class, $response );
+		$this->assertEquals( 200, $response->get_status() );
+		$this->assertTrue( $response->get_data()['success'] );
+	}
+
+	/**
+	 * Test that expired timestamp is rejected.
+	 *
+	 * @return void
+	 */
+	public function test_rejects_expired_timestamp(): void {
+		$timestamp = time() - 400; // 6+ minutes ago (exceeds 5 min tolerance).
+		$data      = wp_json_encode(
+			[
+				'project_id' => $this->project_id,
+				'chain_id'   => $this->chain_id,
+			]
+		);
+		$sign      = $this->generate_hmac_signature( $data, $timestamp );
+		$request   = $this->create_request(
+			[
+				'data'      => $data,
+				'sign'      => $sign,
+				'timestamp' => $timestamp,
+			]
+		);
+		$response  = $this->api->handle_webhook( $request );
+
+		$this->assertInstanceOf( \WP_Error::class, $response );
+		$this->assertEquals( 'timestamp_expired', $response->get_error_code() );
+		$this->assertEquals( 401, $response->get_error_data()['status'] );
+	}
+
+	/**
 	 * Test that action hook is triggered on successful webhook.
 	 *
 	 * @return void
 	 */
 	public function test_triggers_action_hook(): void {
-		$hook_called = false;
+		$hook_called  = false;
 		$hook_payload = null;
 
 		add_action(
@@ -236,6 +331,7 @@ class RestApiWebhookTest extends WP_UnitTestCase {
 
 		$payload  = [
 			'project_id' => $this->project_id,
+			'chain_id'   => $this->chain_id,
 			'order_id'   => 'test-order-789',
 			'amount'     => '50.00',
 			'status'     => 'completed',
@@ -261,9 +357,22 @@ class RestApiWebhookTest extends WP_UnitTestCase {
 	 * @return void
 	 */
 	public function test_fails_without_project_key(): void {
-		update_option( 'paythefly_settings', [ 'project_id' => $this->project_id ] );
+		update_option(
+			'paythefly_settings',
+			[
+				'bsc' => [
+					'project_id' => $this->project_id,
+					// No project_key.
+				],
+			]
+		);
 
-		$data     = wp_json_encode( [ 'project_id' => $this->project_id ] );
+		$data     = wp_json_encode(
+			[
+				'project_id' => $this->project_id,
+				'chain_id'   => $this->chain_id,
+			]
+		);
 		$request  = $this->create_request(
 			[
 				'data' => $data,

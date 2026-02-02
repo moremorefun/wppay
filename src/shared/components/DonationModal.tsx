@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { __ } from '@wordpress/i18n';
-import { NETWORKS, PAYTHEFLY_PAY_URL, type NetworkKey } from '../constants';
+import { NETWORKS, type NetworkKey } from '../constants';
 import type { CreateOrderResponse } from '../types';
 
 interface DonationModalProps {
@@ -103,23 +103,15 @@ export function DonationModal({
 
       const data: CreateOrderResponse = await response.json();
 
-      // Build payment URL
-      const payUrl = new URL(PAYTHEFLY_PAY_URL);
-      payUrl.searchParams.set('chainId', NETWORKS[selectedNetwork].chainId.toString());
-      payUrl.searchParams.set('projectId', data.projectId);
-      payUrl.searchParams.set('amount', amount);
-      payUrl.searchParams.set('serialNo', data.serialNo);
-      payUrl.searchParams.set('token', data.token);
-      if (data.redirect) {
-        payUrl.searchParams.set('redirect', data.redirect);
+      // Use payUrl directly from API (includes signature)
+      if (data.payUrl) {
+        // Add in_wallet parameter
+        const payUrl = new URL(data.payUrl);
+        payUrl.searchParams.set('in_wallet', '1');
+        window.location.href = payUrl.toString();
+      } else {
+        throw new Error(__('Invalid response from server', 'paythefly-crypto-gateway'));
       }
-      if (data.brand) {
-        payUrl.searchParams.set('brand', data.brand);
-      }
-      payUrl.searchParams.set('in_wallet', '1');
-
-      // Redirect to payment page
-      window.location.href = payUrl.toString();
     } catch (err) {
       setError(
         err instanceof Error ? err.message : __('An error occurred', 'paythefly-crypto-gateway')

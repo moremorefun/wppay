@@ -51,26 +51,50 @@ class SettingsTest extends WP_UnitTestCase {
 		$defaults = $this->settings->get_defaults();
 
 		$this->assertIsArray( $defaults );
-		$this->assertArrayHasKey( 'project_id', $defaults );
-		$this->assertArrayHasKey( 'project_key', $defaults );
+		$this->assertArrayHasKey( 'private_key_encrypted', $defaults );
+		$this->assertArrayHasKey( 'evm_address', $defaults );
+		$this->assertArrayHasKey( 'tron_address', $defaults );
+		$this->assertArrayHasKey( 'tron', $defaults );
+		$this->assertArrayHasKey( 'bsc', $defaults );
 		$this->assertArrayHasKey( 'brand', $defaults );
-		$this->assertArrayHasKey( 'webhook_url', $defaults );
 		$this->assertArrayHasKey( 'fab_enabled', $defaults );
 		$this->assertArrayHasKey( 'inline_button_auto', $defaults );
+		$this->assertArrayHasKey( 'debug_log', $defaults );
 	}
 
 	/**
-	 * Test get_defaults returns empty strings for ID/key.
+	 * Test get_defaults returns chain config structure.
+	 *
+	 * @return void
+	 */
+	public function test_get_defaults_chain_config_structure(): void {
+		$defaults = $this->settings->get_defaults();
+
+		$this->assertIsArray( $defaults['tron'] );
+		$this->assertArrayHasKey( 'project_id', $defaults['tron'] );
+		$this->assertArrayHasKey( 'project_key', $defaults['tron'] );
+		$this->assertArrayHasKey( 'contract_address', $defaults['tron'] );
+
+		$this->assertIsArray( $defaults['bsc'] );
+		$this->assertArrayHasKey( 'project_id', $defaults['bsc'] );
+		$this->assertArrayHasKey( 'project_key', $defaults['bsc'] );
+		$this->assertArrayHasKey( 'contract_address', $defaults['bsc'] );
+	}
+
+	/**
+	 * Test get_defaults returns empty strings for credentials.
 	 *
 	 * @return void
 	 */
 	public function test_get_defaults_empty_credentials(): void {
 		$defaults = $this->settings->get_defaults();
 
-		$this->assertEquals( '', $defaults['project_id'] );
-		$this->assertEquals( '', $defaults['project_key'] );
+		$this->assertEquals( '', $defaults['private_key_encrypted'] );
+		$this->assertEquals( '', $defaults['evm_address'] );
+		$this->assertEquals( '', $defaults['tron_address'] );
 		$this->assertEquals( '', $defaults['brand'] );
-		$this->assertEquals( '', $defaults['webhook_url'] );
+		$this->assertEquals( '', $defaults['tron']['project_id'] );
+		$this->assertEquals( '', $defaults['bsc']['project_id'] );
 	}
 
 	/**
@@ -83,39 +107,7 @@ class SettingsTest extends WP_UnitTestCase {
 
 		$this->assertTrue( $defaults['fab_enabled'] );
 		$this->assertFalse( $defaults['inline_button_auto'] );
-	}
-
-	/**
-	 * Test sanitize_settings sanitizes project_id.
-	 *
-	 * @return void
-	 */
-	public function test_sanitize_settings_sanitizes_project_id(): void {
-		$input = [
-			'project_id' => '<script>alert("xss")</script>test-id',
-		];
-
-		$sanitized = $this->settings->sanitize_settings( $input );
-
-		$this->assertArrayHasKey( 'project_id', $sanitized );
-		$this->assertStringNotContainsString( '<script>', $sanitized['project_id'] );
-	}
-
-	/**
-	 * Test sanitize_settings sanitizes project_key.
-	 *
-	 * @return void
-	 */
-	public function test_sanitize_settings_sanitizes_project_key(): void {
-		$input = [
-			'project_key' => "test-key\n\r\t<tag>",
-		];
-
-		$sanitized = $this->settings->sanitize_settings( $input );
-
-		$this->assertArrayHasKey( 'project_key', $sanitized );
-		$this->assertStringNotContainsString( '<tag>', $sanitized['project_key'] );
-		$this->assertStringNotContainsString( "\n", $sanitized['project_key'] );
+		$this->assertFalse( $defaults['debug_log'] );
 	}
 
 	/**
@@ -135,35 +127,51 @@ class SettingsTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test sanitize_settings sanitizes webhook_url.
+	 * Test sanitize_settings sanitizes chain config.
 	 *
 	 * @return void
 	 */
-	public function test_sanitize_settings_sanitizes_webhook_url(): void {
+	public function test_sanitize_settings_sanitizes_chain_config(): void {
 		$input = [
-			'webhook_url' => 'https://example.com/webhook?param=value',
+			'tron' => [
+				'project_id'       => '<script>alert("xss")</script>test-id',
+				'project_key'      => 'secret-key',
+				'contract_address' => 'T12345',
+			],
 		];
 
 		$sanitized = $this->settings->sanitize_settings( $input );
 
-		$this->assertArrayHasKey( 'webhook_url', $sanitized );
-		$this->assertEquals( 'https://example.com/webhook?param=value', $sanitized['webhook_url'] );
+		$this->assertArrayHasKey( 'tron', $sanitized );
+		$this->assertStringNotContainsString( '<script>', $sanitized['tron']['project_id'] );
 	}
 
 	/**
-	 * Test sanitize_settings rejects invalid URLs.
+	 * Test sanitize_settings preserves project_key placeholder.
 	 *
 	 * @return void
 	 */
-	public function test_sanitize_settings_rejects_invalid_url(): void {
+	public function test_sanitize_settings_preserves_project_key_placeholder(): void {
+		// Set up existing settings.
+		update_option(
+			Settings::OPTION_NAME,
+			[
+				'tron' => [
+					'project_key' => 'original-secret',
+				],
+			]
+		);
+
 		$input = [
-			'webhook_url' => 'javascript:alert("xss")',
+			'tron' => [
+				'project_id'  => 'new-id',
+				'project_key' => '********',
+			],
 		];
 
 		$sanitized = $this->settings->sanitize_settings( $input );
 
-		$this->assertArrayHasKey( 'webhook_url', $sanitized );
-		$this->assertEquals( '', $sanitized['webhook_url'] );
+		$this->assertEquals( 'original-secret', $sanitized['tron']['project_key'] );
 	}
 
 	/**
@@ -184,56 +192,20 @@ class SettingsTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test sanitize_settings converts inline_button_auto to boolean.
+	 * Test sanitize_settings converts debug_log to boolean.
 	 *
 	 * @return void
 	 */
-	public function test_sanitize_settings_converts_inline_button_auto_to_boolean(): void {
+	public function test_sanitize_settings_converts_debug_log_to_boolean(): void {
 		$input = [
-			'inline_button_auto' => 'yes',
+			'debug_log' => 'yes',
 		];
 
 		$sanitized = $this->settings->sanitize_settings( $input );
 
-		$this->assertArrayHasKey( 'inline_button_auto', $sanitized );
-		$this->assertIsBool( $sanitized['inline_button_auto'] );
-		$this->assertTrue( $sanitized['inline_button_auto'] );
-	}
-
-	/**
-	 * Test sanitize_settings with false boolean values.
-	 *
-	 * @return void
-	 */
-	public function test_sanitize_settings_with_false_boolean(): void {
-		$input = [
-			'fab_enabled'        => '',
-			'inline_button_auto' => 0,
-		];
-
-		$sanitized = $this->settings->sanitize_settings( $input );
-
-		$this->assertFalse( $sanitized['fab_enabled'] );
-		$this->assertFalse( $sanitized['inline_button_auto'] );
-	}
-
-	/**
-	 * Test sanitize_settings only includes known keys.
-	 *
-	 * @return void
-	 */
-	public function test_sanitize_settings_only_known_keys(): void {
-		$input = [
-			'project_id'   => 'valid-id',
-			'unknown_key'  => 'should-be-ignored',
-			'another_junk' => 'also-ignored',
-		];
-
-		$sanitized = $this->settings->sanitize_settings( $input );
-
-		$this->assertArrayHasKey( 'project_id', $sanitized );
-		$this->assertArrayNotHasKey( 'unknown_key', $sanitized );
-		$this->assertArrayNotHasKey( 'another_junk', $sanitized );
+		$this->assertArrayHasKey( 'debug_log', $sanitized );
+		$this->assertIsBool( $sanitized['debug_log'] );
+		$this->assertTrue( $sanitized['debug_log'] );
 	}
 
 	/**
@@ -242,7 +214,7 @@ class SettingsTest extends WP_UnitTestCase {
 	 * @return void
 	 */
 	public function test_get_returns_default_when_not_set(): void {
-		$value = $this->settings->get( 'project_id', 'default-value' );
+		$value = $this->settings->get( 'brand', 'default-value' );
 
 		$this->assertEquals( '', $value ); // Returns from get_defaults.
 	}
@@ -256,13 +228,13 @@ class SettingsTest extends WP_UnitTestCase {
 		update_option(
 			Settings::OPTION_NAME,
 			[
-				'project_id' => 'my-saved-project-id',
+				'brand' => 'my-saved-brand',
 			]
 		);
 
-		$value = $this->settings->get( 'project_id' );
+		$value = $this->settings->get( 'brand' );
 
-		$this->assertEquals( 'my-saved-project-id', $value );
+		$this->assertEquals( 'my-saved-brand', $value );
 	}
 
 	/**
@@ -277,13 +249,57 @@ class SettingsTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test get method with custom default for non-existent key.
+	 * Test has_private_key returns false when not configured.
 	 *
 	 * @return void
 	 */
-	public function test_get_non_existent_key_returns_custom_default(): void {
-		$value = $this->settings->get( 'non_existent_key', 'my-default' );
+	public function test_has_private_key_returns_false_when_not_configured(): void {
+		$this->assertFalse( Settings::has_private_key() );
+	}
 
-		$this->assertEquals( 'my-default', $value );
+	/**
+	 * Test has_private_key returns true when configured.
+	 *
+	 * @return void
+	 */
+	public function test_has_private_key_returns_true_when_configured(): void {
+		update_option(
+			Settings::OPTION_NAME,
+			[
+				'private_key_encrypted' => 'some-encrypted-data',
+			]
+		);
+
+		$this->assertTrue( Settings::has_private_key() );
+	}
+
+	/**
+	 * Test generate_private_key creates key and addresses.
+	 *
+	 * @return void
+	 */
+	public function test_generate_private_key_creates_addresses(): void {
+		$result = Settings::generate_private_key();
+
+		$this->assertIsArray( $result );
+		$this->assertArrayHasKey( 'evm_address', $result );
+		$this->assertArrayHasKey( 'tron_address', $result );
+		$this->assertStringStartsWith( '0x', $result['evm_address'] );
+		$this->assertStringStartsWith( 'T', $result['tron_address'] );
+	}
+
+	/**
+	 * Test generate_private_key saves to database.
+	 *
+	 * @return void
+	 */
+	public function test_generate_private_key_saves_to_database(): void {
+		Settings::generate_private_key();
+
+		$settings = get_option( Settings::OPTION_NAME );
+
+		$this->assertNotEmpty( $settings['private_key_encrypted'] );
+		$this->assertNotEmpty( $settings['evm_address'] );
+		$this->assertNotEmpty( $settings['tron_address'] );
 	}
 }

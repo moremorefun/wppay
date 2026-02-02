@@ -44,8 +44,9 @@ class ContentFilter {
 			return $content;
 		}
 
-		// Check if project ID is configured.
-		if ( empty( $settings['project_id'] ) ) {
+		// Check if at least one chain is configured.
+		$has_chain_config = ! empty( $settings['tron']['project_id'] ) || ! empty( $settings['bsc']['project_id'] );
+		if ( ! $has_chain_config ) {
 			return $content;
 		}
 
