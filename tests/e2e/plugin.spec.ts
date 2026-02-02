@@ -8,10 +8,14 @@ test.describe('PayTheFly Plugin', () => {
     // Login to WordPress admin
     await page.goto('/wp-login.php');
     await page.waitForSelector('#user_login');
-    await page.fill('#user_login', 'admin');
-    await page.fill('#user_pass', 'password');
-    await page.click('#wp-submit');
-    await page.waitForURL(/\/wp-admin/, { timeout: 30000 });
+    await page.fill('#user_login', process.env.WP_USERNAME || 'pay');
+    await page.fill('#user_pass', process.env.WP_PASSWORD || 'password');
+
+    // Click login and wait for navigation
+    await Promise.all([
+      page.waitForNavigation({ waitUntil: 'networkidle', timeout: 30000 }),
+      page.click('#wp-submit'),
+    ]);
   });
 
   test('plugin is activated', async ({ page }) => {

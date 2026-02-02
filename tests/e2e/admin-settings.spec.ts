@@ -9,11 +9,14 @@ test.describe('Admin Settings', () => {
     await page.goto('/wp-login.php');
     // Wait for login form to be ready
     await page.waitForSelector('#user_login');
-    await page.fill('#user_login', 'admin');
-    await page.fill('#user_pass', 'password');
-    await page.click('#wp-submit');
-    // Wait for redirect to complete
-    await page.waitForURL(/\/wp-admin/, { timeout: 30000 });
+    await page.fill('#user_login', process.env.WP_USERNAME || 'pay');
+    await page.fill('#user_pass', process.env.WP_PASSWORD || 'password');
+
+    // Click login and wait for navigation
+    await Promise.all([
+      page.waitForNavigation({ waitUntil: 'networkidle', timeout: 30000 }),
+      page.click('#wp-submit'),
+    ]);
   });
 
   test('settings page loads', async ({ page }) => {

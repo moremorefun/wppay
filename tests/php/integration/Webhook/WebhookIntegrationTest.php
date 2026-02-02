@@ -47,6 +47,13 @@ class WebhookIntegrationTest extends WP_UnitTestCase {
 	private string $project_id = 'integration-project-123';
 
 	/**
+	 * Test chain ID (TRON mainnet).
+	 *
+	 * @var int
+	 */
+	private int $chain_id = 728126428;
+
+	/**
 	 * Set up test fixtures.
 	 *
 	 * @return void
@@ -58,13 +65,21 @@ class WebhookIntegrationTest extends WP_UnitTestCase {
 		$this->db  = new Database();
 		$this->db->create_tables();
 
-		// Configure settings.
+		// Configure settings with new chain-specific structure.
 		update_option(
 			'paythefly_settings',
 			[
-				'project_id'  => $this->project_id,
-				'project_key' => $this->project_key,
-				'brand'       => 'Integration Test',
+				'tron'  => [
+					'project_id'       => $this->project_id,
+					'project_key'      => $this->project_key,
+					'contract_address' => 'TContractAddress123456789012345678',
+				],
+				'bsc'   => [
+					'project_id'       => 'bsc-project-456',
+					'project_key'      => 'bsc-key-456',
+					'contract_address' => '0x1234567890123456789012345678901234567890',
+				],
+				'brand' => 'Integration Test',
 			]
 		);
 	}
@@ -136,6 +151,7 @@ class WebhookIntegrationTest extends WP_UnitTestCase {
 		// Simulate webhook callback.
 		$payload = [
 			'project_id' => $this->project_id,
+			'chain_id'   => $this->chain_id,
 			'serial_no'  => $serial_no,
 			'amount'     => '100.00',
 			'status'     => 'completed',
@@ -190,6 +206,7 @@ class WebhookIntegrationTest extends WP_UnitTestCase {
 
 		$payload = [
 			'project_id' => $this->project_id,
+			'chain_id'   => $this->chain_id,
 			'serial_no'  => $serial_no,
 			'amount'     => '50.00',
 			'status'     => 'failed',
@@ -218,6 +235,7 @@ class WebhookIntegrationTest extends WP_UnitTestCase {
 	public function test_webhook_rejects_tampered_data(): void {
 		$original_payload = [
 			'project_id' => $this->project_id,
+			'chain_id'   => $this->chain_id,
 			'serial_no'  => 'PTF-test-123',
 			'amount'     => '100.00',
 			'status'     => 'completed',
@@ -267,6 +285,7 @@ class WebhookIntegrationTest extends WP_UnitTestCase {
 
 		$payload = [
 			'project_id' => $this->project_id,
+			'chain_id'   => $this->chain_id,
 			'test'       => 'data',
 		];
 		$data    = wp_json_encode( $payload );
@@ -305,7 +324,7 @@ class WebhookIntegrationTest extends WP_UnitTestCase {
 			'amount'       => '250.00',
 			'status'       => 'completed',
 			'tx_hash'      => '0x1234567890abcdef',
-			'chain_id'     => 728126428,
+			'chain_id'     => $this->chain_id,
 			'token'        => 'USDT',
 			'sender'       => 'TUserAddress123',
 			'receiver'     => 'TReceiverAddress456',
@@ -334,7 +353,7 @@ class WebhookIntegrationTest extends WP_UnitTestCase {
 	public function test_webhook_without_settings(): void {
 		delete_option( 'paythefly_settings' );
 
-		$data    = wp_json_encode( [ 'test' => 'data' ] );
+		$data    = wp_json_encode( [ 'chain_id' => $this->chain_id, 'test' => 'data' ] );
 		$request = $this->create_request(
 			[
 				'data' => $data,
